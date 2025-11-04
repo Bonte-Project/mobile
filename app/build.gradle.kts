@@ -78,7 +78,7 @@ android {
                 "CFG_SERVER_URL",
                 BuildConfigField(
                     type = "String",
-                    value = "\"https://bonte-dev-server.onrender.com/api/\"",
+                    value = "\"https://bonte-dev-server.onrender.com/api\"",
                     comment = "server config url"
                 )
             )
