@@ -24,13 +24,10 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonBuilder
 import okhttp3.OkHttpClient
 import ua.nure.bonte.BuildConfig
 import ua.nure.bonte.repository.ApiErrorResponse
-import ua.nure.bonte.repository.AttributeError
-import ua.nure.bonte.repository.token.TokenRepository
-import java.util.Locale
+import ua.nure.bonte.repository.token.ProfileRepository
 import javax.inject.Singleton
 
 @Module
@@ -71,7 +68,7 @@ object NetworkModule {
     @Singleton
     fun provideKtorClient(
         okHttpClient: OkHttpClient,
-        tokenRepository: TokenRepository
+        profileRepository: ProfileRepository
     ): HttpClient =
         HttpClient(OkHttp) {
             engine {
@@ -140,12 +137,12 @@ object NetworkModule {
             }
 
             defaultRequest {
-                url(BuildConfig.CFG_SERVER_URL)
+                url("https://bonte-dev-server.onrender.com/api/")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
             }
         }.apply {
             plugin(HttpSend).intercept { request ->
-                val token = tokenRepository.token
+                val token = profileRepository.token
                 if(token != null
                     && !request.url.toString().contains("/auth/register")) {
                     request.headers.append(HttpHeaders.Authorization, "Bearer $token")

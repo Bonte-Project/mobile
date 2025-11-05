@@ -72,18 +72,18 @@ android {
         buildConfig = true
     }
 
-    androidComponents {
-        onVariants {
-            it.buildConfigFields?.put(
-                "CFG_SERVER_URL",
-                BuildConfigField(
-                    type = "String",
-                    value = "\"https://bonte-dev-server.onrender.com/api\"",
-                    comment = "server config url"
-                )
-            )
-        }
-    }
+//    androidComponents {
+//        onVariants {
+//            it.buildConfigFields?.put(
+//                "CFG_SERVER_URL",
+//                BuildConfigField(
+//                    type = "String",
+//                    value = "\"https://bonte-dev-server.onrender.com\"",
+//                    comment = "server config url"
+//                )
+//            )
+//        }
+//    }
 
     applicationVariants.all {
         outputs.all {
