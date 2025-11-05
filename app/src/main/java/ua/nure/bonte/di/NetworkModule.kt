@@ -137,7 +137,7 @@ object NetworkModule {
             }
 
             defaultRequest {
-                url("https://bonte-dev-server.onrender.com/api/")
+                url("https://bonte-dev-server.fly.dev/api/")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
             }
         }.apply {
