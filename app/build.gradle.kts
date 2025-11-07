@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+//    implementation(libs.lifecycle.runtime.compose)
 
 //DI
     implementation(libs.android.hilt)
@@ -153,6 +154,12 @@ dependencies {
     implementation(libs.coil.network)
 // DataStore
     implementation(libs.datastore.preferences)
+
+    //Google
+    implementation(libs.credentials)
+    implementation(libs.credentials.play)
+    implementation(libs.googleid)
+    implementation(libs.google.signin)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

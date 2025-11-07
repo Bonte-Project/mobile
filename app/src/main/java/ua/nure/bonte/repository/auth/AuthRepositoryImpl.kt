@@ -1,6 +1,5 @@
 package ua.nure.bonte.repository.auth
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -17,8 +16,12 @@ import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.Result
 import ua.nure.bonte.repository.db.DbRepository
 import ua.nure.bonte.repository.db.data.entity.ProfileEntity
-import ua.nure.bonte.repository.dto.MessageDto
+import ua.nure.bonte.repository.dto.GoogleSignInDto
+import ua.nure.bonte.repository.dto.GoogleSignInRequest
+import ua.nure.bonte.repository.dto.ResponseDto
 import ua.nure.bonte.repository.dto.RegisterRequest
+import ua.nure.bonte.repository.dto.SignInDto
+import ua.nure.bonte.repository.dto.SignInRequest
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.safeCall
@@ -35,8 +38,8 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
         email: String,
         password: String,
         role: String
-    ): Result<MessageDto, DataError> = withContext(Dispatchers.IO) {
-        safeCall<MessageDto> {
+    ): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ResponseDto> {
             httpClient.post("auth/register") {
                 setBody(
                     body = RegisterRequest(
@@ -63,4 +66,42 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
             .flatMapLatest { db -> db.profileDao.getProfile() }
             .flowOn(dbDeliveryDispatcher)
             .catch { it.printStackTrace() }
+
+    override suspend fun googleSignIn(
+        token: String,
+        email: String
+    ): Result<GoogleSignInDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<GoogleSignInDto> {
+            httpClient.post("auth/google") {
+                setBody(
+                    GoogleSignInRequest(
+                        token = token,
+                         email = email
+                    )
+                )
+            }
+        }.onSuccess {
+            profileRepository.setToken(newToken = it.token)
+            profileRepository.setUserName(newUserName = email)
+        }
+    }
+
+    override suspend fun signIn(
+        email: String,
+        password: String
+    ): Result<SignInDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<SignInDto> {
+            httpClient.post("auth/login") {
+                setBody(
+                    SignInRequest(
+                        email = email,
+                        password = password
+                    )
+                )
+            }
+        }.onSuccess {
+            profileRepository.setToken(newToken = it.accessToken)
+            profileRepository.setUserName(newUserName = email)
+        }
+    }
 }

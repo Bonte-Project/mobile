@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ua.nure.bonte.ui.auth.register.RegisterScreen
+import ua.nure.bonte.ui.auth.signin.SignInScreen
 
 @Composable
 fun NavGraph(
@@ -20,13 +21,20 @@ fun NavGraph(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Screen.Auth.Registration
+        startDestination = Screen.Auth.SignIn
     ) {
         composable<Screen.Auth.Registration> {
             RegisterScreen(
                 viewModel = hiltViewModel(),
                 navController = navController
             )
+        }
+        composable<Screen.Auth.SignIn> {
+            SignInScreen(
+                viewModel = hiltViewModel(),
+                navController = navController
+            )
+
         }
     }
 
