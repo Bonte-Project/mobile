@@ -21,6 +21,7 @@ import ua.nure.bonte.ui.theme.AppTheme
 @Composable
 fun BonteButton(
     modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
     text: String,
     onClick: () -> Unit
@@ -43,6 +44,7 @@ fun BonteButton(
             )
         }
         Text(
+            modifier = textModifier,
             text = text,
             style = AppTheme.typography.regular.copy(
                 color = AppTheme.color.background

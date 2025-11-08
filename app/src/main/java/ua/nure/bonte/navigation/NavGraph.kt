@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ua.nure.bonte.ui.auth.register.RegisterScreen
 import ua.nure.bonte.ui.auth.signin.SignInScreen
+import ua.nure.bonte.ui.theme.AppTheme
 
 @Composable
 fun NavGraph(
@@ -34,7 +35,12 @@ fun NavGraph(
                 viewModel = hiltViewModel(),
                 navController = navController
             )
-
+        }
+        composable<Screen.Auth.ForgotPassword> {
+            Text(
+                text = "Forgot password",
+                style = AppTheme.typography.large
+            )
         }
     }
 

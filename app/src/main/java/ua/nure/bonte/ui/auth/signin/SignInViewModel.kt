@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.onError
@@ -33,10 +34,20 @@ import javax.inject.Inject
 
     fun onAction(action: SignIn.Action) = viewModelScope.launch {
         when(action) {
-            SignIn.Action.OnBack -> _event.emit(SignIn.Event.OnBack)
+            SignIn.Action.OnBack -> _event.emit(OnBack)
             is SignIn.Action.OnGoogleSignIn -> onGoogleSignIn(idToken = action.idToken, email = action.email)
             is SignIn.Action.OnNavigate -> _event.emit(OnNavigate(route = action.route))
             SignIn.Action.OnSignIn -> signIn(email = "john.dow@gmail.com", password = "Secret1" )
+            is SignIn.Action.OnEmailChange -> _state.update { s ->
+                s.copy(
+                    email = action.email
+                )
+            }
+            is SignIn.Action.OnPasswordChange -> _state.update { s ->
+                s.copy(
+                    password = action.password
+                )
+            }
         }
     }
 

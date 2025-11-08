@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Bonte</string>
-    <string name="google">Google</string>
+    <string name="google">Sign in with Google</string>
     <string name="login">Log In</string>
+    <string name="signInMessage">Sign in to continue your fitness journey</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgotPassword">Forgot password?</string>
+    <string name="continueWith">Or continue with</string>
+    <string name="dontHaveAnAcc">Don’t have an account?</string>
+    <string name="signUp">Sign up</string>
 </resources>

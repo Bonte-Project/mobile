@@ -14,7 +14,7 @@ data class AppColors(
     val foreground: Color = Color.Unspecified,
     val accent: Color = Color.Unspecified,
     val active: Color = Color.Unspecified,
-          
+    val grey: Color = Color.Unspecified,
 )
 
 internal val LightColors = AppColors(
@@ -22,6 +22,7 @@ internal val LightColors = AppColors(
     foreground = foregroundColorLight,
     accent = Color(0xFFFFD0E1),
     active = Color(0XFFFF9FC2),
+    grey = Color(0xFF8C8C8C),
 )
 
 internal val DarkColors = AppColors(
@@ -29,4 +30,5 @@ internal val DarkColors = AppColors(
     foreground = foregroundColorDark,
     accent = Color(0xFFFFD0E1),
     active = Color(0XFFEC1380),
+    grey = Color(0xFFCECECE),
 )
