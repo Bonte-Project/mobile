@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.ui.auth.register.Register.Event.*
+import ua.nure.bonte.ui.auth.signin.SignIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,11 +46,41 @@ class RegisterViewModel @Inject constructor(
             }
 
             Register.Action.OnRegister -> register(
-                fullName = "John Dow",
-                email = "john.dow@gmail.com",
-                password = "Secret1",
+                fullName = "${state.value.firstName} ${state.value.lastName}",
+                email = state.value.email,
+                password = state.value.password,
                 role = "user"
             )
+            is Register.Action.OnFirstNameChange -> _state.update { s ->
+                s.copy(
+                    firstName = action.firstName
+                )
+            }
+            is Register.Action.OnLastNameChange -> _state.update { s ->
+                s.copy(
+                    lastName = action.lastName
+                )
+            }
+            is Register.Action.OnEmailChange -> _state.update { s ->
+                s.copy(
+                    email = action.email
+                )
+            }
+            is Register.Action.OnPasswordChange -> _state.update { s ->
+                s.copy(
+                    password = action.password
+                )
+            }
+            is Register.Action.OnConfirmPasswordChange -> _state.update { s ->
+                s.copy(
+                    confirmPassword = action.confirmPassword
+                )
+            }
+            is Register.Action.OnPrivacyPolicyAgreementChange -> _state.update { s ->
+                s.copy(
+                    isPrivacyPolicyAgreed = action.isAgreed
+                )
+            }
         }
     }
 

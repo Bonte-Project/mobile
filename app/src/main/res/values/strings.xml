@@ -5,8 +5,15 @@
     <string name="signInMessage">Sign in to continue your fitness journey</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="confirmPassword">Confirm Password</string>
     <string name="forgotPassword">Forgot password?</string>
     <string name="continueWith">Or continue with</string>
     <string name="dontHaveAnAcc">Don’t have an account?</string>
+    <string name="haveAnAcc">Already have an account?</string>
     <string name="signUp">Sign up</string>
+    <string name="createAccount">Create Account</string>
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="continueBut">Continue</string>
+    <string name="privacyPolicyAgreement">I agree to the Privacy Policy</string>
 </resources>

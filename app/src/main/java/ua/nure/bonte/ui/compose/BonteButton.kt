@@ -24,11 +24,13 @@ fun BonteButton(
     textModifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
     text: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
         modifier = modifier,
         onClick = onClick,
+        enabled = enabled,
         shape = AppTheme.shape.buttonShape,
         colors = ButtonDefaults.buttonColors().copy(
             containerColor = AppTheme.color.active
