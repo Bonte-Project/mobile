@@ -8,12 +8,18 @@ object Register {
     sealed interface Event {
         data class OnNavigate(val route: Screen) : Event
         data object OnBack : Event
+        data object OnRegistrationSuccess : Event
     }
 
     sealed interface Action {
         data object OnBack : Action
         data class OnNavigate(val route: Screen) : Action
         data object OnRegister : Action
+
+        data object OnVerificationConfirmed : Action
+        data class OnVerificationCodeChange(val code: String) : Register.Action
+        data object OnResendCodeClick : Action
+        data object OnVerificationSuccessAcknowledge : Action
         data class OnFirstNameChange(val firstName: String) : Register.Action
         data class OnLastNameChange(val lastName: String) : Register.Action
         data class OnEmailChange(val email: String) : Register.Action
@@ -31,5 +37,10 @@ object Register {
         val password: String = if (BuildConfig.DEBUG) "Secret1" else "",
         val confirmPassword: String = if (BuildConfig.DEBUG) "Secret1" else "",
         val isPrivacyPolicyAgreed: Boolean = false,
+        val passwordMismatchError: String? = null,
+        val showVerificationSheet: Boolean = false,
+        val showSuccessSheet: Boolean = false,
+        val verificationCode: String = if (BuildConfig.DEBUG) "1234" else "",
+        val verificationError: String? = null,
     )
 }

@@ -12,4 +12,8 @@ sealed class Screen {
         @Serializable data object ForgotPassword : Auth()
         @Serializable data class EnterCode(val email: String) : Auth()
     }
+    @Serializable sealed class Profile: Screen() {
+        @Serializable data object Dashboard : Profile()
+        @Serializable data object Settings : Profile()
+    }
 }

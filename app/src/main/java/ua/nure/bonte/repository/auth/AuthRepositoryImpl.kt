@@ -26,6 +26,8 @@ import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.safeCall
 import ua.nure.bonte.repository.token.ProfileRepository
+import ua.nure.bonte.repository.dto.VerificationCodeRequest
+import ua.nure.bonte.repository.dto.VerifyCodeRequest
 
 class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     private val httpClient: HttpClient,
@@ -102,6 +104,25 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
         }.onSuccess {
             profileRepository.setToken(newToken = it.accessToken)
             profileRepository.setUserName(newUserName = email)
+        }
+    }
+    override suspend fun sendVerificationCode(email: String): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ResponseDto> {
+            httpClient.post("auth/send-code") {
+                setBody(
+                    VerificationCodeRequest(email = email)
+                )
+            }
+        }
+    }
+
+    override suspend fun verifyCode(email: String, code: String): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ResponseDto> {
+            httpClient.post("auth/verify-code") {
+                setBody(
+                    VerifyCodeRequest(email = email, code = code)
+                )
+            }
         }
     }
 }

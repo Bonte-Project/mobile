@@ -13,4 +13,6 @@ interface AuthRepository {
     fun getProfile(): Flow<ProfileEntity>
     suspend fun googleSignIn(token: String, email: String): Result<GoogleSignInDto, DataError>
     suspend fun signIn(email: String, password: String): Result<SignInDto, DataError>
+    suspend fun sendVerificationCode(email: String): Result<ResponseDto, DataError>
+    suspend fun verifyCode(email: String, code: String): Result<ResponseDto, DataError>
 }

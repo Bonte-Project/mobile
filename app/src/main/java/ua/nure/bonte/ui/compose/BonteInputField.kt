@@ -30,9 +30,21 @@ fun BonteInputField(
     label: String? = null,
     value: String? = null,
     isPassword: Boolean = false,
+    errorText: String? = null,
     onValueChange: (String) -> Unit
 ) {
     var isVisible by remember { mutableStateOf(false) }
+    val isError = errorText != null
+    val errorSupportingText: (@Composable () -> Unit)? = if (isError) {
+        {
+            Text(
+                text = errorText ?: "",
+                style = AppTheme.typography.small.copy(
+                    color = AppTheme.color.error
+                )
+            )
+        }
+    } else null
     if (isPassword) {
         OutlinedTextField(
             modifier = modifier,
@@ -44,12 +56,16 @@ fun BonteInputField(
             textStyle = AppTheme.typography.regular,
             value = value ?: "",
             onValueChange = onValueChange,
+            isError = isError,
+            supportingText = errorSupportingText,
+
             label = {
                 Text(
                     text = label ?: "",
                     style = AppTheme.typography.regular.copy(
                         color = AppTheme.color.grey
                     )
+
                 )
             },
             visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -65,12 +81,15 @@ fun BonteInputField(
                 )
             }
         )
-    } else {
+    }
+    else {
         OutlinedTextField(
             modifier = modifier,
             textStyle = AppTheme.typography.regular,
             value = value ?: "",
             onValueChange = onValueChange,
+            isError = isError,
+            supportingText = errorSupportingText,
             label = {
                 Text(
                     text = label ?: "",
@@ -92,7 +111,8 @@ fun BonteInputFieldPreview(modifier: Modifier = Modifier) {
                 label = "input password",
                 value = "secret1",
                 onValueChange = {},
-                isPassword = true
+                isPassword = true,
+                errorText = "Passwords do not match"
             )
         }
     }
@@ -107,7 +127,8 @@ fun BonteInputFieldDarkPreview(modifier: Modifier = Modifier) {
                 label = "input password",
                 value = "secret1",
                 onValueChange = {},
-                isPassword = true
+                isPassword = true,
+                errorText = "Passwords do not match"
             )
         }
     }
