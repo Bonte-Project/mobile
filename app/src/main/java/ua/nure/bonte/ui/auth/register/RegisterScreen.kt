@@ -43,6 +43,7 @@ import ua.nure.bonte.ui.theme.AppTheme
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import ua.nure.bonte.ui.auth.forgotpassword.ForgotPassword
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,10 +107,10 @@ private fun RegisterScreenContent(
 ) {
     BonteScreen() {
         BonteBackHeader(
-            text = stringResource(R.string.createAccount)
-        ) {
-            onAction(Register.Action.OnBack)
-        }
+            text = stringResource(R.string.createAccount),
+            onBackClick = { onAction(Register.Action.OnBack)
+            }
+        )
 
         Column(
             modifier = Modifier

@@ -22,14 +22,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.nure.bonte.R
 import ua.nure.bonte.ui.compose.BonteActivityCard
-import ua.nure.bonte.ui.compose.BonteDashboardHeader
+import ua.nure.bonte.ui.compose.BonteDashboardMainInfo
 import ua.nure.bonte.ui.compose.BonteMetricCard
 import ua.nure.bonte.ui.compose.BonteScreen
 import ua.nure.bonte.ui.compose.BonteRecommendationCard
 import ua.nure.bonte.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import ua.nure.bonte.navigation.Screen
+import ua.nure.bonte.ui.auth.forgotpassword.ForgotPassword
 import ua.nure.bonte.ui.auth.register.Register
+import ua.nure.bonte.ui.compose.BonteBackHeader
 
 @Composable
 fun DashboardScreen(
@@ -59,7 +61,16 @@ private fun DashboardScreenContent(
 ){
     BonteScreen(modifier = Modifier.padding(horizontal = 0.dp)) {
 
-        BonteDashboardHeader(
+        BonteBackHeader(
+            text = stringResource(R.string.dashboard),
+            showBackButton = false,
+            onBackClick = {},
+            onSettingsClick = {
+                onAction(Dashboard.Action.OnNavigate(Screen.Profile.Settings))
+            }
+        )
+
+        BonteDashboardMainInfo(
             name = state.name,
             role = state.role,
             onEditClick = { /* TODO: onAction(Dashboard.Action.OnNavigate(Screen.EditProfile)) */ },

@@ -108,7 +108,7 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     }
     override suspend fun sendVerificationCode(email: String): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
         safeCall<ResponseDto> {
-            httpClient.post("auth/send-code") {
+            httpClient.post("/auth/forgot-password") {
                 setBody(
                     VerificationCodeRequest(email = email)
                 )
@@ -118,7 +118,7 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
 
     override suspend fun verifyCode(email: String, code: String): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
         safeCall<ResponseDto> {
-            httpClient.post("auth/verify-code") {
+            httpClient.post("/auth/verify-email") {
                 setBody(
                     VerifyCodeRequest(email = email, code = code)
                 )

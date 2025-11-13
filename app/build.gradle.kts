@@ -150,8 +150,8 @@ dependencies {
     implementation(libs.roomPaging)
     ksp(libs.roomCompiler)
 //  AsyncImage
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-network-okhttp:2.6.0")
 // DataStore
     implementation(libs.datastore.preferences)
 

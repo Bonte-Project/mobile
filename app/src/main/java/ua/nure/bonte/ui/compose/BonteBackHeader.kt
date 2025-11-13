@@ -17,19 +17,23 @@ import ua.nure.bonte.R
 import ua.nure.bonte.ui.theme.AppTheme
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Column
 
 @Composable
 fun BonteBackHeader(
     modifier: Modifier = Modifier,
     text: String,
-    @DrawableRes icon: Int = R.drawable.outline_arrow_back_24,
-    onBackClick: () -> Unit
+    showBackButton: Boolean = true,
+    onBackClick: () -> Unit,
+    onSettingsClick: (() -> Unit)? = null
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 8.dp)
     ) {
+
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = text,
@@ -38,30 +42,56 @@ fun BonteBackHeader(
                 textAlign = TextAlign.Center
             )
         )
-        Row(
-            modifier = Modifier.align(Alignment.CenterStart),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = onBackClick,
+        if (showBackButton) {
+            Row(
+                modifier = Modifier.align(Alignment.CenterStart),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(icon),
-                    contentDescription = "Go Back",
-                    tint = AppTheme.color.foreground
-                )
+                IconButton(
+                    onClick = onBackClick,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.outline_arrow_back_24),
+                        contentDescription = "Go Back",
+                        tint = AppTheme.color.foreground
+                    )
+                }
+            }
+        }
+
+        else if (onSettingsClick != null) {
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onSettingsClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.settings_icon),
+                        contentDescription = "Settings",
+                        tint = AppTheme.color.foreground,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun BonteBackHeaderNewPreview() {
+fun BonteBackHeaderPreview() {
     AppTheme {
-        BonteBackHeader(
-            text = "Settings",
-            onBackClick = {},
-            icon = R.drawable.outline_arrow_back_24
-        )
+        Column {
+            BonteBackHeader(
+                text = "Settings",
+                onBackClick = {}
+            )
+            BonteBackHeader(
+                text = "User Dashboard",
+                showBackButton = false,
+                onBackClick = {},
+                onSettingsClick = {}
+            )
+        }
     }
 }

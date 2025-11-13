@@ -54,10 +54,11 @@ private fun ForgotPasswordScreenContent(
 ){
     BonteScreen() {
         BonteBackHeader(
-            text = stringResource(R.string.resetPassword)
-        ) {
-            onAction(ForgotPassword.Action.OnBack)
-        }
+            text = stringResource(R.string.resetPassword),
+            onBackClick = {
+                onAction(ForgotPassword.Action.OnBack)
+            }
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize(),

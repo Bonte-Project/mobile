@@ -59,10 +59,11 @@ private fun SettingsScreenContent(
 
     ) {
         BonteBackHeader(
-            text = stringResource(R.string.settings)
-        ) {
-            onAction(Settings.Action.OnBack)
-        }
+            text = stringResource(R.string.settings),
+            onBackClick = {
+                onAction(Settings.Action.OnBack)
+            }
+        )
         BonteButton(
             modifier = Modifier
                 .fillMaxWidth()

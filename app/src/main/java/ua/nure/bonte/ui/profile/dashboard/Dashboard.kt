@@ -16,6 +16,7 @@ object Dashboard {
 
     data class State(
         val inProgress: Boolean = false,
+        val avatarUrl: String? = if (BuildConfig.DEBUG) "https://placehold.co/64x64/FF9FC2/1A0D13?text=JS" else null,
         val name: String = if (BuildConfig.DEBUG) "John Smith" else "",
         val role: String = if (BuildConfig.DEBUG) "premium user" else "",
         val calories: String = if (BuildConfig.DEBUG) "2150" else "",
