@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +31,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import ua.nure.bonte.R
 import ua.nure.bonte.navigation.Screen
-import ua.nure.bonte.ui.compose.BonteBackHeader
+import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteButton
 import ua.nure.bonte.ui.compose.BonteInputField
 import ua.nure.bonte.ui.compose.BonteScreen
@@ -43,7 +39,6 @@ import ua.nure.bonte.ui.theme.AppTheme
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import ua.nure.bonte.ui.auth.forgotpassword.ForgotPassword
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,7 +101,7 @@ private fun RegisterScreenContent(
     onAction: (Register.Action) -> Unit
 ) {
     BonteScreen() {
-        BonteBackHeader(
+        BonteHeader(
             text = stringResource(R.string.createAccount),
             onBackClick = { onAction(Register.Action.OnBack)
             }

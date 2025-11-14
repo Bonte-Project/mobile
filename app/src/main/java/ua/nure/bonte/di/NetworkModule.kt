@@ -27,7 +27,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import ua.nure.bonte.BuildConfig
 import ua.nure.bonte.repository.ApiErrorResponse
-import ua.nure.bonte.repository.token.ProfileRepository
+import ua.nure.bonte.repository.token.TokenRepository
 import javax.inject.Singleton
 
 @Module
@@ -68,7 +68,7 @@ object NetworkModule {
     @Singleton
     fun provideKtorClient(
         okHttpClient: OkHttpClient,
-        profileRepository: ProfileRepository
+        tokenRepository: TokenRepository
     ): HttpClient =
         HttpClient(OkHttp) {
             engine {
@@ -142,7 +142,7 @@ object NetworkModule {
             }
         }.apply {
             plugin(HttpSend).intercept { request ->
-                val token = profileRepository.token
+                val token = tokenRepository.token
                 if(token != null
                     && !request.url.toString().contains("/auth/register")) {
                     request.headers.append(HttpHeaders.Authorization, "Bearer $token")

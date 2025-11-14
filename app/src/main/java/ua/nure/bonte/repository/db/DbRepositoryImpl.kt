@@ -12,12 +12,13 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import ua.nure.bonte.repository.db.data.AppDb
-import ua.nure.bonte.repository.token.ProfileRepository
+import ua.nure.bonte.repository.token.TokenRepository
 
 class DbRepositoryImpl(
     private val context: Context,
-    private val profileRepository: ProfileRepository
+    private val tokenRepository: TokenRepository
 ): DbRepository {
+
     override val db: AppDb
         get() = checkNotNull(_db) {"Db must be initializes"}
     override val dbFlow: Flow<AppDb>
@@ -25,7 +26,7 @@ class DbRepositoryImpl(
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            profileRepository.userNameFlow.distinctUntilChanged { old, new ->  old == new}.collect { profile ->
+            tokenRepository.userNameFlow.distinctUntilChanged { old, new -> old == new }.collect { profile ->
                 if(profile == null) {
                     synchronized(this) {
                         _db = null

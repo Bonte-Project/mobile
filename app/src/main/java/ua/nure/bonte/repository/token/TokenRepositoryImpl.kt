@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ua.nure.bonte.config.PreferencesKeys
 
-class ProfileRepositoryImpl (
+class TokenRepositoryImpl (
     private val dataStore: DataStore<Preferences>
-) : ProfileRepository {
+) : TokenRepository {
     override val token
         get() = _token
     override val userName: String?

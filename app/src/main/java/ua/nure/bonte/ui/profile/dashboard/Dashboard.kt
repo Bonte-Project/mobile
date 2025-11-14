@@ -1,7 +1,7 @@
 package ua.nure.bonte.ui.profile.dashboard
 
-import ua.nure.bonte.BuildConfig
 import ua.nure.bonte.navigation.Screen
+import ua.nure.bonte.repository.db.data.entity.ProfileEntity
 
 object Dashboard {
     sealed interface Event {
@@ -16,8 +16,6 @@ object Dashboard {
 
     data class State(
         val inProgress: Boolean = false,
-        val avatarUrl: String? = null,
-        val name: String? = null,
-        val role: String? = null,
+        val profile: ProfileEntity? = null
     )
 }

@@ -11,7 +11,7 @@ import ua.nure.bonte.repository.db.data.entity.ProfileEntity
     entities = [
         ProfileEntity::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {

@@ -15,8 +15,10 @@ import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.auth.AuthRepositoryImpl
 import ua.nure.bonte.repository.db.DbRepository
 import ua.nure.bonte.repository.db.DbRepositoryImpl
-import ua.nure.bonte.repository.token.ProfileRepository
-import ua.nure.bonte.repository.token.ProfileRepositoryImpl
+import ua.nure.bonte.repository.token.TokenRepository
+import ua.nure.bonte.repository.token.TokenRepositoryImpl
+import ua.nure.bonte.repository.user.UserRepository
+import ua.nure.bonte.repository.user.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -26,7 +28,7 @@ object RepositoryModule {
     @Singleton
     fun provideProfileRepository(
         dataStore: DataStore<Preferences>
-    ): ProfileRepository = ProfileRepositoryImpl(
+    ): TokenRepository = TokenRepositoryImpl(
         dataStore = dataStore
     )
 
@@ -36,21 +38,33 @@ object RepositoryModule {
         httpClient: HttpClient,
         @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
         dbRepository: DbRepository,
-        profileRepository: ProfileRepository,
+        tokenRepository: TokenRepository,
     ): AuthRepository = AuthRepositoryImpl(
         httpClient = httpClient,
         dbDeliveryDispatcher = dbDeliveryDispatcher,
         dbRepository = dbRepository,
-        profileRepository = profileRepository
+        tokenRepository = tokenRepository
     )
 
     @Provides
     @Singleton
     fun provideDbRepository(
         @ApplicationContext context: Context,
-        profileRepository: ProfileRepository
+        tokenRepository: TokenRepository
     ): DbRepository = DbRepositoryImpl(
         context = context,
-        profileRepository = profileRepository
+        tokenRepository = tokenRepository
+    )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideUserRepository(
+        httpClient: HttpClient,
+        @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
+        dbRepository: DbRepository,
+    ): UserRepository = UserRepositoryImpl(
+        httpClient = httpClient,
+        dbRepository = dbRepository,
+        dbDeliveryDispatcher = dbDeliveryDispatcher
     )
 }

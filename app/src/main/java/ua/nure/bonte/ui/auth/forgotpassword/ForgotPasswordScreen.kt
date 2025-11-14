@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.nure.bonte.R
-import ua.nure.bonte.ui.compose.BonteBackHeader
+import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteButton
 import ua.nure.bonte.ui.compose.BonteInputField
 import ua.nure.bonte.ui.compose.BonteScreen
@@ -53,7 +52,7 @@ private fun ForgotPasswordScreenContent(
     onAction: (ForgotPassword.Action) -> Unit
 ){
     BonteScreen() {
-        BonteBackHeader(
+        BonteHeader(
             text = stringResource(R.string.resetPassword),
             onBackClick = {
                 onAction(ForgotPassword.Action.OnBack)

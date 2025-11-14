@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
@@ -72,7 +73,9 @@ import javax.inject.Inject
                 email = email,
                 password = password
             ).onSuccess {
-                Log.d(TAG, "signIn: ${it.message}, ${it.accessToken}")
+                _event.emit(
+                    SignIn.Event.OnNavigate(route = Screen.Profile.Dashboard)
+                )
 
             }.onError { error ->
                 Log.e(TAG, "signIn: Error: $error" , )

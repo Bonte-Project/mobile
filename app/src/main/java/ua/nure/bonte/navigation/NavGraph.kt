@@ -51,7 +51,7 @@ fun NavGraph(
                 navController = navController
             )
         }
-        composable<Screen.Profile.Dashboard> {
+        composable<Screen.Profile.Settings> {
             SettingsScreen(
                 viewModel = hiltViewModel(),
                 navController = navController

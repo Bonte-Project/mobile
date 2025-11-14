@@ -25,13 +25,13 @@ import ua.nure.bonte.repository.dto.SignInRequest
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.safeCall
-import ua.nure.bonte.repository.token.ProfileRepository
+import ua.nure.bonte.repository.token.TokenRepository
 import ua.nure.bonte.repository.dto.VerifyCodeRequest
 
 class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     private val httpClient: HttpClient,
     private val dbRepository: DbRepository,
-    private val profileRepository: ProfileRepository,
+    private val tokenRepository: TokenRepository,
     @DbDeliveryDispatcher private val dbDeliveryDispatcher: CloseableCoroutineDispatcher,
 ) : AuthRepository {
     override suspend fun register(
@@ -82,8 +82,8 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
                 )
             }
         }.onSuccess {
-            profileRepository.setToken(newToken = it.token)
-            profileRepository.setUserName(newUserName = email)
+            tokenRepository.setToken(newToken = it.token)
+            tokenRepository.setUserName(newUserName = email)
         }
     }
 
@@ -101,8 +101,8 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
                 )
             }
         }.onSuccess {
-            profileRepository.setToken(newToken = it.accessToken)
-            profileRepository.setUserName(newUserName = email)
+            tokenRepository.setToken(newToken = it.accessToken)
+            tokenRepository.setUserName(newUserName = email)
         }
     }
 

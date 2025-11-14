@@ -2,7 +2,7 @@ package ua.nure.bonte.repository.token
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface ProfileRepository {
+interface TokenRepository {
     val token: String?
     val userName: String?
     val userNameFlow: StateFlow<UserName>
