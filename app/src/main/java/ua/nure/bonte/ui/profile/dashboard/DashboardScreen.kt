@@ -58,8 +58,8 @@ fun DashboardScreen(
 private fun DashboardScreenContent(
     state: Dashboard.State,
     onAction: (Dashboard.Action) -> Unit
-){
-    BonteScreen(modifier = Modifier.padding(horizontal = 0.dp)) {
+) {
+    BonteScreen {
 
         BonteBackHeader(
             text = stringResource(R.string.dashboard),
@@ -71,9 +71,9 @@ private fun DashboardScreenContent(
         )
 
         BonteDashboardMainInfo(
-            name = state.name,
-            role = state.role,
-            onEditClick = { /* TODO: onAction(Dashboard.Action.OnNavigate(Screen.EditProfile)) */ },
+            name = state.name ?: "",
+            role = state.role ?: "",
+            avatarUrl = state.avatarUrl,
             onSettingsClick = { onAction(Dashboard.Action.OnNavigate(Screen.Profile.Settings)) },
         )
 
@@ -85,117 +85,22 @@ private fun DashboardScreenContent(
             verticalArrangement = Arrangement.spacedBy(AppTheme.dimension.small)
         ) {
 
-            item {
-                Text(
-                    text = stringResource(R.string.todaysSummary),
-                    style = AppTheme.typography.large,
-                    modifier = Modifier.padding(top = AppTheme.dimension.normal, bottom = AppTheme.dimension.small)
-                )
-            }
-
-            item {
-                BonteMetricCard(
-                    title = stringResource(R.string.calories),
-                    value = state.calories,
-                    backgroundColor = AppTheme.color.accent,
-                    onClick = {
-                        //onAction(Dashboard.Action.OnNavigate(Screen.CaloriesDetails))
-                    }
-                )
-            }
-            item {
-                BonteMetricCard(
-                    title = stringResource(R.string.sleep),
-                    value = state.sleep,
-                    backgroundColor = AppTheme.color.accent,
-                    onClick = {
-                    // onAction(Dashboard.Action.OnNavigate(Screen.SleepDetails))
-                    }
-                )
-            }
-            item {
-                BonteMetricCard(
-                    title = stringResource(R.string.activity),
-                    value = state.activity,
-                    backgroundColor = AppTheme.color.accent,
-                    onClick = {
-                    // onAction(Dashboard.Action.OnNavigate(Screen.ActivityDetails))
-                    }
-                )
-            }
-            item {
-                Text(
-                    text = stringResource(R.string.recentActivities),
-                    style = AppTheme.typography.large,
-                    modifier = Modifier.padding(top = AppTheme.dimension.normal, bottom = AppTheme.dimension.small)
-                )
-            }
-
-            item {
-                BonteActivityCard(
-                    iconRes = R.drawable.nutrition_icon,
-                    title = stringResource(R.string.nutrition),
-                    value = state.nutrition,
-                    onClick = {
-                    // onAction(Dashboard.Action.OnNavigate(Screen.NutritionDetails))
-                    }
-                )
-            }
-            item {
-                BonteActivityCard(
-                    iconRes = R.drawable.yoga_icon,
-                    title = stringResource(R.string.yoga),
-                    value = state.yoga,
-                    onClick = {
-                    // onAction(Dashboard.Action.OnNavigate(Screen.YogaDetails))
-                    }
-                )
-            }
-
-            item {
-                Text(
-                    text = stringResource(R.string.aiInsights),
-                    style = AppTheme.typography.large,
-                    modifier = Modifier.padding(top = AppTheme.dimension.normal, bottom = AppTheme.dimension.small)
-                )
-            }
-
-            item {
-                BonteMetricCard(
-                    title = stringResource(R.string.sleepQuality),
-                    value = state.sleepQuality,
-                    backgroundColor = AppTheme.color.accent,
-                    onClick = {
-                    // onAction(Dashboard.Action.OnNavigate(Screen.SleepQualityDetails))
-                })
-            }
-
-            item {
-                BonteRecommendationCard(
-                    title = "Personal Recommendations",
-                    recommendationText = state.recommendations,
-                    onClick = {
-                    // onAction(Dashboard.Action.OnNavigate(Screen.Recommendations))
-                    }
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
-            }
         }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun DashboardScreenContentPreview(modifier: Modifier = Modifier) {
+private fun DashboardScreenContentPreview(modifier: Modifier = Modifier) {
     AppTheme() {
         Box(
             modifier = modifier.background(color = AppTheme.color.background)
         ) {
             DashboardScreenContent(
-                state = Dashboard.State(name = "John Smith"),
+                state = Dashboard.State(
+                    name = "John Smith",
+                    role = "Premium user",
+                ),
                 onAction = { }
             )
         }
@@ -204,13 +109,16 @@ fun DashboardScreenContentPreview(modifier: Modifier = Modifier) {
 
 @Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun DashboardScreenContentDarkPreview(modifier: Modifier = Modifier) {
+private fun DashboardScreenContentDarkPreview(modifier: Modifier = Modifier) {
     AppTheme() {
         Box(
             modifier = modifier.background(color = AppTheme.color.background)
         ) {
             DashboardScreenContent(
-                state = Dashboard.State(name = "John Smith"),
+                state = Dashboard.State(
+                    name = "John Smith",
+                    role = "Premium user",
+                ),
                 onAction = { }
             )
         }

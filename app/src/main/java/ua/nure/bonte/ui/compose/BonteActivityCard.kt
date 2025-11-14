@@ -1,12 +1,17 @@
 package ua.nure.bonte.ui.compose
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +32,7 @@ import ua.nure.bonte.ui.theme.AppTheme
 @Composable
 fun BonteActivityCard(
     modifier: Modifier = Modifier,
-    iconRes: Int,
+    @DrawableRes iconRes: Int,
     title: String,
     value: String,
     onClick: () -> Unit
@@ -36,35 +41,33 @@ fun BonteActivityCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(AppTheme.dimension.normal))
-            .background(AppTheme.color.foreground.copy(alpha = 0.05f))
-            .clickable(onClick = onClick)
-            .padding(AppTheme.dimension.normal),
+            .padding(AppTheme.dimension.normal)
+            .height(IntrinsicSize.Min)
+            .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = title,
-                tint = AppTheme.color.foreground,
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(end = AppTheme.dimension.small)
-            )
-            Text(
-                text = title,
-                style = AppTheme.typography.regular.copy(
-                    color = AppTheme.color.foreground
-                ),
-                modifier = Modifier.padding(start = AppTheme.dimension.extraSmall)
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .size(AppTheme.dimension.iconSize)
+                .padding(end = AppTheme.dimension.small),
+            painter = painterResource(iconRes),
+            contentDescription = title,
+            tint = AppTheme.color.foreground
+        )
+        Text(
+            modifier = Modifier.padding(start = AppTheme.dimension.extraSmall),
+            text = title,
+            style = AppTheme.typography.regular,
+        )
+        Spacer(
+            modifier = Modifier
+                .weight(1F)
+                .fillMaxHeight()
+        )
         Text(
             text = value,
             style = AppTheme.typography.regular.copy(
-                color = AppTheme.color.grey,
                 fontWeight = FontWeight.Bold
             )
         )
