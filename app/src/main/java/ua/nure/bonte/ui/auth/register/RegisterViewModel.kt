@@ -49,7 +49,7 @@ class RegisterViewModel @Inject constructor(
 
                 _state.update { it.copy(passwordMismatchError = null, inProgress = true) }
 
-                authRepository.sendVerificationCode(email = currentState.email)
+                authRepository.forgotPassword(email = currentState.email)
                     .onSuccess {
                         _state.update { it.copy(showVerificationSheet = true, inProgress = false) }
                     }
@@ -67,7 +67,7 @@ class RegisterViewModel @Inject constructor(
                 val currentState = state.value
                 Log.d(TAG, "Resending code for ${currentState.email}")
                 // Надсилаємо код повторно
-                authRepository.sendVerificationCode(email = currentState.email)
+                authRepository.forgotPassword(email = currentState.email)
                     .onError { error ->
                         Log.e(TAG, "Failed to resend verification code: $error")
                         _state.update { it.copy(verificationError = "Failed to resend code.") }

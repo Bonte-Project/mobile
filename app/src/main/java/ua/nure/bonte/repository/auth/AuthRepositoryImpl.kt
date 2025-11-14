@@ -26,7 +26,6 @@ import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.safeCall
 import ua.nure.bonte.repository.token.ProfileRepository
-import ua.nure.bonte.repository.dto.VerificationCodeRequest
 import ua.nure.bonte.repository.dto.VerifyCodeRequest
 
 class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
@@ -78,7 +77,7 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
                 setBody(
                     GoogleSignInRequest(
                         token = token,
-                         email = email
+                        email = email
                     )
                 )
             }
@@ -106,21 +105,37 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
             profileRepository.setUserName(newUserName = email)
         }
     }
-    override suspend fun sendVerificationCode(email: String): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+
+    override suspend fun forgotPassword(email: String): Result<ResponseDto, DataError> =
+        withContext(Dispatchers.IO) {
+            safeCall<ResponseDto> {
+                httpClient.post("/auth/forgot-password") {
+                    setBody(
+                        forgotPassword(email = email)
+                    )
+                }
+            }
+        }
+
+    override suspend fun verifyCode(email: String, code: String): Result<ResponseDto, DataError> =
+        withContext(Dispatchers.IO) {
+            safeCall<ResponseDto> {
+                httpClient.post("/auth/verify-reset-code") {
+                    setBody(
+                        VerifyCodeRequest(email = email, code = code)
+                    )
+                }
+            }
+        }
+
+    override suspend fun resetPassword(
+        email: String,
+        newPassword: String
+    ): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
         safeCall<ResponseDto> {
             httpClient.post("/auth/forgot-password") {
                 setBody(
-                    VerificationCodeRequest(email = email)
-                )
-            }
-        }
-    }
-
-    override suspend fun verifyCode(email: String, code: String): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
-        safeCall<ResponseDto> {
-            httpClient.post("/auth/verify-email") {
-                setBody(
-                    VerifyCodeRequest(email = email, code = code)
+                    resetPassword(email = email, newPassword = newPassword)
                 )
             }
         }

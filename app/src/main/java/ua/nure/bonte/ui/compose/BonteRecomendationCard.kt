@@ -1,4 +1,4 @@
-package ua.nure.bonte.ui.compose
+ package ua.nure.bonte.ui.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
