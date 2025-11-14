@@ -26,6 +26,9 @@ import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.safeCall
 import ua.nure.bonte.repository.token.ProfileRepository
+import ua.nure.bonte.repository.dto.ForgotPasswordRequest
+import ua.nure.bonte.repository.dto.VerifyResetCodeRequest
+import ua.nure.bonte.repository.dto.ResetPasswordRequest
 
 class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     private val httpClient: HttpClient,
@@ -102,6 +105,48 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
         }.onSuccess {
             profileRepository.setToken(newToken = it.accessToken)
             profileRepository.setUserName(newUserName = email)
+        }
+    }
+
+    override suspend fun forgotPassword(email: String): Result<ResponseDto, DataError> =
+        withContext(Dispatchers.IO) {
+            safeCall<ResponseDto> {
+                httpClient.post("auth/forgot-password") {
+                    setBody(
+                        ForgotPasswordRequest(
+                            email = email)
+                    )
+                }
+            }
+        }
+
+    override suspend fun verifyResetCode(
+        email: String,
+        code: String
+    ): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ResponseDto> {
+            httpClient.post("auth/verify-reset-code") {
+                setBody(
+                    VerifyResetCodeRequest(
+                        email = email,
+                        code = code)
+                )
+            }
+        }
+    }
+
+    override suspend fun resetPassword(
+        email: String,
+        newPassword: String
+    ): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ResponseDto> {
+            httpClient.post("auth/reset-password") {
+                setBody(
+                    ResetPasswordRequest(
+                        email = email,
+                        newPassword = newPassword)
+                )
+            }
         }
     }
 }
