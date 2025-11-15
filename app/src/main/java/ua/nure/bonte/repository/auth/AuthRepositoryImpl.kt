@@ -1,5 +1,6 @@
 package ua.nure.bonte.repository.auth
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -16,10 +17,12 @@ import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.Result
 import ua.nure.bonte.repository.db.DbRepository
 import ua.nure.bonte.repository.db.data.entity.ProfileEntity
+import ua.nure.bonte.repository.dto.ForgotPasswordRequest
 import ua.nure.bonte.repository.dto.GoogleSignInDto
 import ua.nure.bonte.repository.dto.GoogleSignInRequest
 import ua.nure.bonte.repository.dto.ResponseDto
 import ua.nure.bonte.repository.dto.RegisterRequest
+import ua.nure.bonte.repository.dto.ResetPasswordRequest
 import ua.nure.bonte.repository.dto.SignInDto
 import ua.nure.bonte.repository.dto.SignInRequest
 import ua.nure.bonte.repository.onError
@@ -109,9 +112,11 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     override suspend fun forgotPassword(email: String): Result<ResponseDto, DataError> =
         withContext(Dispatchers.IO) {
             safeCall<ResponseDto> {
-                httpClient.post("/auth/forgot-password") {
+                httpClient.post("auth/forgot-password") {
                     setBody(
-                        forgotPassword(email = email)
+                        ForgotPasswordRequest(
+                            email = email
+                        )
                     )
                 }
             }
@@ -120,7 +125,7 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     override suspend fun verifyCode(email: String, code: String): Result<ResponseDto, DataError> =
         withContext(Dispatchers.IO) {
             safeCall<ResponseDto> {
-                httpClient.post("/auth/verify-reset-code") {
+                httpClient.post("auth/verify-reset-code") {
                     setBody(
                         VerifyCodeRequest(email = email, code = code)
                     )
@@ -133,11 +138,30 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
         newPassword: String
     ): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
         safeCall<ResponseDto> {
-            httpClient.post("/auth/forgot-password") {
+            httpClient.post("auth/reset-password") {
                 setBody(
-                    resetPassword(email = email, newPassword = newPassword)
+                    ResetPasswordRequest(email = email, newPassword = newPassword)
                 )
             }
         }
     }
+
+    override suspend fun verifyEmail(
+        email: String,
+        code: String
+    ): Result<ResponseDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ResponseDto> {
+            httpClient.post("auth/verify-email") {
+                setBody(
+                    VerifyCodeRequest(
+                        email = email,
+                        code = code
+                    )
+                )
+            }
+
+        }
+    }
+
+
 }

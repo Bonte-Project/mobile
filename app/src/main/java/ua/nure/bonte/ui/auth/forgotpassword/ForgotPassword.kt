@@ -12,12 +12,20 @@ object ForgotPassword {
     }
 
     sealed interface Action{
-        data object OnBack : ForgotPassword.Action
-        data class OnNavigate(val route: Screen) : ForgotPassword.Action
-        data class OnEmailChange(val email: String) : ForgotPassword.Action
+        data object OnBack : Action
+        data class OnNavigate(val route: Screen) : Action
+        data class OnEmailChange(val email: String) : Action
+        data object OnResetPassword : Action
+        data object OnResendCode: Action
+        data object OnDismissCodeDialog: Action
+        data object OnDismissPasswordDialog: Action
+        data class OnVerifyCode(val code: String): Action
+        data class OnNewPassword(val password: String): Action
     }
 
     data class State(
-        val email: String = if (BuildConfig.DEBUG) "test@gmail.com" else "",
+        val email: String = if (BuildConfig.DEBUG) "john.dow@gmail.com" else "",
+        val showVerificationDialog: Boolean = false,
+        val showNewPasswordDialog: Boolean = false
     )
 }

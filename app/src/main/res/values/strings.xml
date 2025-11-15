@@ -45,4 +45,8 @@
     <string name="successfulVerification">Account verification successful</string>
     <string name="creatingAccount">Creating Account...</string>
     <string name="dashboard">Dashboard</string>
+    <string name="accountVerificationMessagePart1">Please check your email</string>
+    <string name="accountVerificationMessagePart2">and type the code we sent you\nStill no code?</string>
+    <string name="verifyCode">Verify code</string>
+    <string name="newPassword">Create new password</string>
 </resources>

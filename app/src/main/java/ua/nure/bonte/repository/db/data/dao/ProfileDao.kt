@@ -14,4 +14,7 @@ interface ProfileDao {
 
     @Query("SELECT * FROM profileentity LIMIT 1")
     fun getProfile(): Flow<ProfileEntity>
+
+    @Query("SELECT * FROM profileentity LIMIT 1")
+    fun getProfileEntity(): ProfileEntity?
 }

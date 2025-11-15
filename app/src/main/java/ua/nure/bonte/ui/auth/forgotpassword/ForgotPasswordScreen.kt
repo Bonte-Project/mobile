@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.nure.bonte.R
+import ua.nure.bonte.ui.auth.forgotpassword.compose.NewPasswordDialog
+import ua.nure.bonte.ui.compose.AccountVerificationDialog
 import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteButton
 import ua.nure.bonte.ui.compose.BonteInputField
@@ -58,64 +61,64 @@ private fun ForgotPasswordScreenContent(
                 onAction(ForgotPassword.Action.OnBack)
             }
         )
-        Column(
+
+        Text(
+            modifier = Modifier.padding(top = AppTheme.dimension.normal),
+            text = stringResource(R.string.enterEmail),
+            style = AppTheme.typography.large
+        )
+        Text(
+            modifier = Modifier.padding(top = AppTheme.dimension.extraSmall),
+            text = stringResource(R.string.codeSendMes),
+            style = AppTheme.typography.regular
+        )
+        BonteInputField(
             modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.dimension.normal)
+                .padding(top = AppTheme.dimension.normal)
+                .padding(top = AppTheme.dimension.normal),
+            label = stringResource(R.string.email),
+            value = state.email
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AppTheme.dimension.normal)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = AppTheme.dimension.normal),
-                        text = stringResource(R.string.enterEmail),
-                        style = AppTheme.typography.large
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = AppTheme.dimension.extraSmall),
-                        text = stringResource(R.string.codeSendMes),
-                        style = AppTheme.typography.regular
-                    )
+            onAction(ForgotPassword.Action.OnEmailChange(email = it))
+        }
+        Spacer(
+            modifier = Modifier.fillMaxWidth().weight(1F)
+        )
+        BonteButton(
+            modifier = Modifier.fillMaxWidth().padding(all = AppTheme.dimension.normal),
+            text = stringResource(R.string.continueBut),
+        ) {
+            onAction(ForgotPassword.Action.OnResetPassword)
+        }
+
+        if (state.showVerificationDialog) {
+            AccountVerificationDialog(
+                modifier = Modifier,
+                email = state.email,
+                onResend = {
+                    onAction(ForgotPassword.Action.OnResendCode)
+                },
+                onVerify = { code ->
+                    onAction(ForgotPassword.Action.OnVerifyCode(code = code))
+                },
+                onDismiss = {
+                    onAction(ForgotPassword.Action.OnDismissCodeDialog)
                 }
+            )
+        }
 
-                BonteInputField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AppTheme.dimension.normal)
-                        .padding(top = AppTheme.dimension.normal)
-                        .padding(top = AppTheme.dimension.normal),
-                    label = stringResource(R.string.email),
-                    value = state.email
-                ) {
-                    onAction(ForgotPassword.Action.OnEmailChange(email = it))
+        if (state.showNewPasswordDialog) {
+            NewPasswordDialog(
+                modifier = Modifier,
+                onDismiss = {
+                    onAction(ForgotPassword.Action.OnDismissPasswordDialog)
+                },
+                onNewPassword = {
+                    onAction(ForgotPassword.Action.OnNewPassword(password = it))
                 }
-
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = AppTheme.dimension.normal),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                BonteButton(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(bottom = 40.dp),
-                    textModifier = Modifier.padding(horizontal = AppTheme.dimension.normal),
-                    text = stringResource(R.string.continueBut),
-                ) {
-
-                }
-            }
+            )
         }
     }
 }

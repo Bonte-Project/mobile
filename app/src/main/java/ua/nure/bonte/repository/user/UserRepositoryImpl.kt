@@ -18,6 +18,7 @@ import ua.nure.bonte.repository.Result
 import ua.nure.bonte.repository.db.DbRepository
 import ua.nure.bonte.repository.db.data.entity.ProfileEntity
 import ua.nure.bonte.repository.dto.ProfileDataDto
+import ua.nure.bonte.repository.dto.ProfileDto
 import ua.nure.bonte.repository.dto.UserProfileRequest
 import ua.nure.bonte.repository.dto.mapper.toEntity
 import ua.nure.bonte.repository.onSuccess
@@ -30,16 +31,32 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     @DbDeliveryDispatcher private val dbDeliveryDispatcher: CloseableCoroutineDispatcher,
 ) : UserRepository {
     override suspend fun loadMe(): Result<ProfileDataDto, DataError> = withContext(Dispatchers.IO) {
-        safeCall<ProfileDataDto> {
-            httpClient.get("users/me") {
+        val profile = dbRepository.db.profileDao.getProfileEntity()
+        if (profile == null) {
+            safeCall<ProfileDataDto> {
+                httpClient.get("users/me") {
 
+                }
+            }.onSuccess { profileDataDto ->
+                dbRepository.db.profileDao
+                    .insert(
+                        profileDataDto.user.toEntity()
+                    )
             }
-        }.onSuccess { profileDataDto ->
-            dbRepository.db.profileDao
-                .insert(
-                    profileDataDto.user.toEntity()
-                )
-
+        } else {
+            Result.Success (ProfileDataDto("", user = ProfileDto(
+                id = profile.id,
+                email = profile.email ?: "",
+                fullName = profile.fullName ?: "",
+                avatarUrl = profile.avatarUrl,
+                role = profile.role,
+                isEmailVerified = profile.isEmailVerified,
+                height = profile.height,
+                weight = profile.weight,
+                age = profile.age,
+                createdAt = profile.createdAt,
+                isPremium = profile.isPremium
+            )))
         }
     }
 
@@ -65,6 +82,8 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
                 )
 
             }
+        }.onSuccess {
+            dbRepository.db.profileDao.insert(it.user.toEntity())
         }
     }
 

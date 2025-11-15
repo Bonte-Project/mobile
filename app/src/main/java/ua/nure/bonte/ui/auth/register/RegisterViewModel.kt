@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.onError
@@ -23,7 +24,6 @@ class RegisterViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val TAG by lazy { RegisterViewModel::class.simpleName }
-    private val PASSWORD_MISMATCH_ERROR = "Passwords do not match"
 
     private val _state = MutableStateFlow(Register.State())
     val state = _state.asStateFlow()
@@ -32,76 +32,15 @@ class RegisterViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     private var registrationJob: Job? = null
+    private var resendCodeJob: Job? = null
+    private var verifyCodeJob: Job? = null
 
     fun onAction(action: Register.Action) = viewModelScope.launch {
         when (action) {
-            Register.Action.OnBack -> _event.emit(Register.Event.OnBack)
+            Register.Action.OnBack -> _event.emit(OnBack)
             is Register.Action.OnNavigate -> _event.emit(OnNavigate(route = action.route))
 
             Register.Action.OnRegister -> {
-                val currentState = state.value
-
-                if (currentState.password != currentState.confirmPassword) {
-                    _state.update { it.copy(passwordMismatchError = PASSWORD_MISMATCH_ERROR) }
-                    return@launch
-                }
-                if (!currentState.isPrivacyPolicyAgreed) return@launch
-
-                _state.update { it.copy(passwordMismatchError = null, inProgress = true) }
-
-                authRepository.forgotPassword(email = currentState.email)
-                    .onSuccess {
-                        _state.update { it.copy(showVerificationSheet = true, inProgress = false) }
-                    }
-                    .onError { error ->
-                        Log.e(TAG, "Failed to send verification code: $error")
-                        _state.update { it.copy(verificationError = "Failed to send code. Try again.", inProgress = false) }
-                    }
-            }
-
-            is Register.Action.OnVerificationCodeChange -> _state.update { s ->
-                s.copy(verificationCode = action.code, verificationError = null)
-            }
-
-            Register.Action.OnResendCodeClick -> {
-                val currentState = state.value
-                Log.d(TAG, "Resending code for ${currentState.email}")
-                // Надсилаємо код повторно
-                authRepository.forgotPassword(email = currentState.email)
-                    .onError { error ->
-                        Log.e(TAG, "Failed to resend verification code: $error")
-                        _state.update { it.copy(verificationError = "Failed to resend code.") }
-                    }
-            }
-
-            Register.Action.OnVerificationConfirmed -> {
-                val currentState = state.value
-                _state.update { it.copy(inProgress = true, verificationError = null) }
-
-                authRepository.verifyCode(email = currentState.email, code = currentState.verificationCode)
-                    .onSuccess {
-                        _state.update {
-                            it.copy(
-                                showVerificationSheet = false,
-                                showSuccessSheet = true,
-                                inProgress = false
-                            )
-                        }
-                    }
-                    .onError {
-                        _state.update {
-                            it.copy(
-                                verificationError = "Invalid code. Please try again or resend.",
-                                inProgress = false
-                            )
-                        }
-                    }
-            }
-
-            Register.Action.OnVerificationSuccessAcknowledge -> {
-                _state.update { it.copy(showSuccessSheet = false, inProgress = true) }
-
-
                 register(
                     fullName = "${state.value.firstName} ${state.value.lastName}",
                     email = state.value.email,
@@ -109,12 +48,33 @@ class RegisterViewModel @Inject constructor(
                     role = "user"
                 )
             }
+
+            Register.Action.OnResendCodeClick -> {
+                _state.update { s ->
+                    s.copy(
+                        showVerificationDialog = false
+                    )
+                }
+                resendCode(email = state.value.email)
+            }
+
+            is Register.Action.OnVerificationEmailCode -> {
+                verifyEmail(code = action.code, email = state.value.email)
+            }
+
             is Register.Action.OnFirstNameChange -> _state.update { s -> s.copy(firstName = action.firstName) }
             is Register.Action.OnLastNameChange -> _state.update { s -> s.copy(lastName = action.lastName) }
             is Register.Action.OnEmailChange -> _state.update { s -> s.copy(email = action.email) }
-            is Register.Action.OnPasswordChange -> _state.update { s -> s.copy(password = action.password, passwordMismatchError = null) }
-            is Register.Action.OnConfirmPasswordChange -> _state.update { s -> s.copy(confirmPassword = action.confirmPassword, passwordMismatchError = null) }
+            is Register.Action.OnPasswordChange -> _state.update { s -> s.copy(password = action.password) }
+            is Register.Action.OnConfirmPasswordChange -> _state.update { s -> s.copy(confirmPassword = action.confirmPassword) }
             is Register.Action.OnPrivacyPolicyAgreementChange -> _state.update { s -> s.copy(isPrivacyPolicyAgreed = action.isAgreed) }
+            Register.Action.OnDismissEmailVerification -> {
+                _state.update { s ->
+                    s.copy(
+                        showVerificationDialog = false
+                    )
+                }
+            }
         }
     }
 
@@ -127,13 +87,53 @@ class RegisterViewModel @Inject constructor(
         registrationJob?.cancel()
         registrationJob = viewModelScope.launch {
             authRepository.register(
-                fullName = fullName, email = email, password = password, role = role
+                fullName = fullName,
+                email = email,
+                password = password,
+                role = role
             ).onSuccess { message ->
-                Log.d(TAG, "Registration success: $message")
-                _event.emit(Register.Event.OnRegistrationSuccess)
+                _state.update { s ->
+                    s.copy(
+                        showVerificationDialog = true
+                    )
+                }
             }.onError { error: DataError ->
                 Log.e(TAG, "Registration error: $error")
             }
         }
+    }
+
+    private fun resendCode(email: String) {
+        resendCodeJob?.cancel()
+        resendCodeJob = viewModelScope.launch {
+            authRepository.forgotPassword(
+                email = email
+            ).onSuccess {
+                _state.update { s ->
+                    s.copy(
+                        showVerificationDialog = true
+                    )
+                }
+            }.onError {
+
+            }
+
+        }
+    }
+
+    private fun verifyEmail(code: String, email: String) {
+        verifyCodeJob?.cancel()
+        verifyCodeJob = viewModelScope.launch {
+            authRepository.verifyEmail(
+                email = email,
+                code = code
+            ).onSuccess {
+                _event.emit(Register.Event.OnNavigate(route = Screen.Auth.SignIn))
+
+            }.onError {
+
+            }
+        }
+
     }
 }

@@ -39,6 +39,8 @@ import ua.nure.bonte.ui.theme.AppTheme
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import ua.nure.bonte.ui.auth.forgotpassword.ForgotPassword
+import ua.nure.bonte.ui.compose.AccountVerificationDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,26 +49,13 @@ fun RegisterScreen(
     navController: NavController
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collect {
             when (it) {
                 Register.Event.OnBack -> navController.navigateUp()
                 is Register.Event.OnNavigate -> navController.navigate(route = it.route)
-                Register.Event.OnRegistrationSuccess -> navController.navigate(Screen.Profile.Dashboard) {
-                    popUpTo(Screen.Profile.Dashboard) { inclusive = true }
-                }
             }
-        }
-    }
-
-    LaunchedEffect(state.showVerificationSheet, state.showSuccessSheet) {
-        if (!state.showVerificationSheet && !state.showSuccessSheet && sheetState.isVisible) {
-            scope.launch { sheetState.hide() }
-        } else if ((state.showVerificationSheet || state.showSuccessSheet) && !sheetState.isVisible) {
-            scope.launch { sheetState.show() }
         }
     }
 
@@ -74,24 +63,6 @@ fun RegisterScreen(
         state = state,
         onAction = viewModel::onAction
     )
-
-    if (state.showVerificationSheet || state.showSuccessSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                if (state.inProgress) return@ModalBottomSheet
-                viewModel.onAction(Register.Action.OnBack)
-            },
-            sheetState = sheetState,
-            containerColor = AppTheme.color.background,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (state.showSuccessSheet) {
-                VerificationSuccessSheetContent(state, viewModel::onAction)
-            } else if (state.showVerificationSheet) {
-                VerificationCodeSheetContent(state, viewModel::onAction)
-            }
-        }
-    }
 
 }
 
@@ -162,7 +133,6 @@ private fun RegisterScreenContent(
                 label = stringResource(R.string.confirmPassword),
                 value = state.confirmPassword,
                 isPassword = true,
-                errorText = state.passwordMismatchError
             ) {
                 onAction(Register.Action.OnConfirmPasswordChange(confirmPassword = it))
             }
@@ -225,103 +195,20 @@ private fun RegisterScreenContent(
             )
         }
 
-    }
-}
-
-@Composable
-private fun VerificationCodeSheetContent(
-    state: Register.State,
-    onAction: (Register.Action) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(AppTheme.dimension.normal),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.accountVerification),
-            style = AppTheme.typography.large.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = AppTheme.dimension.normal)
-        )
-
-        Text(
-            text = buildAnnotatedString {
-                append(stringResource(R.string.codemes1))
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = AppTheme.color.active)) {
-                    append(state.email)
+        if(state.showVerificationDialog) {
+            AccountVerificationDialog(
+                modifier = Modifier,
+                email = state.email,
+                onResend = {
+                    onAction(Register.Action.OnResendCodeClick)
+                },
+                onVerify = { code ->
+                    onAction(Register.Action.OnVerificationEmailCode(code = code))
+                },
+                onDismiss = {
+                    onAction(Register.Action.OnDismissEmailVerification)
                 }
-                append(stringResource(R.string.codemes2))
-            },
-            textAlign = TextAlign.Center,
-            style = AppTheme.typography.regular,
-            modifier = Modifier.padding(bottom = AppTheme.dimension.normal)
-        )
-
-        BonteInputField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppTheme.dimension.normal)
-                .padding(top = AppTheme.dimension.normal),
-            label = stringResource(R.string.codemes2),
-            value = state.verificationCode,
-            errorText = state.verificationError,
-            onValueChange = { onAction(Register.Action.OnVerificationCodeChange(it)) }
-        )
-
-        Row(
-            modifier = Modifier.padding(top = AppTheme.dimension.small)
-        ) {
-            Text(
-                text = stringResource(R.string.stillNoCode),
-                style = AppTheme.typography.small
             )
-            Text(
-                text = stringResource(R.string.resendCode),
-                style = AppTheme.typography.small.copy(color = AppTheme.color.active),
-                modifier = Modifier
-                    .padding(bottom = AppTheme.dimension.normal)
-                    .clickable { onAction(Register.Action.OnResendCodeClick) }
-            )
-        }
-
-        BonteButton(
-            modifier = Modifier.fillMaxWidth()
-                .padding(vertical = AppTheme.dimension.normal),
-            textModifier = Modifier.padding(vertical = AppTheme.dimension.small),
-            text = if (state.inProgress) stringResource(R.string.verifying) else stringResource(R.string.confirm),
-            enabled = state.verificationCode.isNotBlank() && !state.inProgress
-        ) {
-            onAction(Register.Action.OnVerificationConfirmed)
-        }
-    }
-}
-
-@Composable
-private fun VerificationSuccessSheetContent(
-    state: Register.State,
-    onAction: (Register.Action) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(AppTheme.dimension.normal),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.successfulVerification),
-            style = AppTheme.typography.large.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-
-        BonteButton(
-            modifier = Modifier.fillMaxWidth()
-                .padding(bottom = AppTheme.dimension.normal),
-            textModifier = Modifier.padding(vertical = AppTheme.dimension.small),
-            text = if (state.inProgress) stringResource(R.string.creatingAccount) else stringResource(R.string.createAccount),
-            enabled = !state.inProgress
-        ) {
-            onAction(Register.Action.OnVerificationSuccessAcknowledge)
         }
     }
 }
