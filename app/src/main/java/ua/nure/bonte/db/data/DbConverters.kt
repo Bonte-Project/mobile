@@ -1,4 +1,4 @@
-package ua.nure.bonte.repository.db.data
+package ua.nure.bonte.db.data
 
 import androidx.room.TypeConverter
 import java.util.Date

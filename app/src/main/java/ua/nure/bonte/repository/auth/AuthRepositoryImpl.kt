@@ -1,6 +1,5 @@
 package ua.nure.bonte.repository.auth
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -15,8 +14,9 @@ import kotlinx.coroutines.withContext
 import ua.nure.bonte.di.DbDeliveryDispatcher
 import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.Result
-import ua.nure.bonte.repository.db.DbRepository
-import ua.nure.bonte.repository.db.data.entity.ProfileEntity
+import ua.nure.bonte.db.DbRepository
+import ua.nure.bonte.db.data.entity.Profile
+import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.repository.dto.ForgotPasswordRequest
 import ua.nure.bonte.repository.dto.GoogleSignInDto
 import ua.nure.bonte.repository.dto.GoogleSignInRequest
@@ -65,7 +65,7 @@ class AuthRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getProfile(): Flow<ProfileEntity> =
+    override fun getProfile(): Flow<Profile> =
         dbRepository.dbFlow
             .flatMapLatest { db -> db.profileDao.getProfile() }
             .flowOn(dbDeliveryDispatcher)

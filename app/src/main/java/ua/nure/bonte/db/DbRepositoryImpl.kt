@@ -1,7 +1,6 @@
-package ua.nure.bonte.repository.db
+package ua.nure.bonte.db
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import ua.nure.bonte.repository.db.data.AppDb
+import ua.nure.bonte.db.data.AppDb
 import ua.nure.bonte.repository.token.TokenRepository
 
 class DbRepositoryImpl(

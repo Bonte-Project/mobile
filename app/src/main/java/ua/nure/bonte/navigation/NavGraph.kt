@@ -1,8 +1,11 @@
 package ua.nure.bonte.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -45,18 +48,11 @@ fun NavGraph(
                 navController = navController
             )
         }
-        composable<Screen.Profile.Dashboard> {
-            DashboardScreen(
-                viewModel = hiltViewModel(),
-                navController = navController
-            )
-        }
-        composable<Screen.Profile.Settings> {
-            SettingsScreen(
-                viewModel = hiltViewModel(),
-                navController = navController
-            )
-        }
+
+        profileGraph(navController = navController)
+        trainerGraph(navController = navController)
+        analyticsGraph(navController = navController)
+        chatGraph(navController = navController)
     }
 
 }

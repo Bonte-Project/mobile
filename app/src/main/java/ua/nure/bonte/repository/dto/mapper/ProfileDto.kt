@@ -1,6 +1,6 @@
 package ua.nure.bonte.repository.dto.mapper
 
-import ua.nure.bonte.repository.db.data.entity.ProfileEntity
+import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.repository.dto.ProfileDto
 
 fun ProfileDto.toEntity() =

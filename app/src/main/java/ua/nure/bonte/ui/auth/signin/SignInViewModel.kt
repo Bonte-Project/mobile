@@ -38,7 +38,7 @@ import javax.inject.Inject
             SignIn.Action.OnBack -> _event.emit(OnBack)
             is SignIn.Action.OnGoogleSignIn -> onGoogleSignIn(idToken = action.idToken, email = action.email)
             is SignIn.Action.OnNavigate -> _event.emit(OnNavigate(route = action.route))
-            SignIn.Action.OnSignIn -> signIn(email = "john.dow@gmail.com", password = "Secret1" )
+            SignIn.Action.OnSignIn -> signIn(email = state.value.email, password = state.value.password )
             is SignIn.Action.OnEmailChange -> _state.update { s ->
                 s.copy(
                     email = action.email

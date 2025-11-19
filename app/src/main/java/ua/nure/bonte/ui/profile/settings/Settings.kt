@@ -1,9 +1,7 @@
 package ua.nure.bonte.ui.profile.settings
 
-import ua.nure.bonte.BuildConfig
 import ua.nure.bonte.navigation.Screen
-import ua.nure.bonte.repository.db.data.entity.ProfileEntity
-import ua.nure.bonte.ui.auth.register.Register
+import ua.nure.bonte.db.data.entity.ProfileEntity
 
 object Settings {
     sealed interface Event {

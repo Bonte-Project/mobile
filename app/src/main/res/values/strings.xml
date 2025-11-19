@@ -49,4 +49,8 @@
     <string name="accountVerificationMessagePart2">and type the code we sent you\nStill no code?</string>
     <string name="verifyCode">Verify code</string>
     <string name="newPassword">Create new password</string>
+    <string name="trainer">Trainer</string>
+    <string name="analytics">Analytics</string>
+    <string name="chat">Chats</string>
+    <string name="create">Create</string>
 </resources>

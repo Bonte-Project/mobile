@@ -123,7 +123,7 @@ class SettingsViewModel @Inject constructor(
         userRepository.getMe().collect { profile ->
             _state.update { s ->
                 s.copy(
-                    profile = profile
+                    profile = profile.profileEntity
                 )
             }
         }

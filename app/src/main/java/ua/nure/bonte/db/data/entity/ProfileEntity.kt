@@ -1,7 +1,9 @@
-package ua.nure.bonte.repository.db.data.entity
+package ua.nure.bonte.db.data.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 @Entity
 data class ProfileEntity(
@@ -33,3 +35,12 @@ data class ProfileEntity(
         )
     }
 }
+
+data class Profile(
+    @Embedded val profileEntity: ProfileEntity,
+    @Relation(
+        entity = TrainerEntity::class,
+        parentColumn = "id",
+        entityColumn = "userId",
+    ) val trainer: Trainer?
+)

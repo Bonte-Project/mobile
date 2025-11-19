@@ -21,7 +21,7 @@ import ua.nure.bonte.ui.compose.BonteScreen
 import ua.nure.bonte.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import ua.nure.bonte.navigation.Screen
-import ua.nure.bonte.repository.db.data.entity.ProfileEntity
+import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteHeaderType
 

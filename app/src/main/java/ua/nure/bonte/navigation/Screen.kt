@@ -10,10 +10,21 @@ sealed class Screen {
         @Serializable data object Registration : Auth()
         @Serializable data object SignIn : Auth()
         @Serializable data object ForgotPassword : Auth()
-        @Serializable data class EnterCode(val email: String) : Auth()
     }
     @Serializable sealed class Profile: Screen() {
         @Serializable data object Dashboard : Profile()
         @Serializable data object Settings : Profile()
+    }
+
+    @Serializable sealed class Trainer: Screen() {
+        @Serializable data object TrainerProfile : Trainer()
+    }
+
+    @Serializable sealed class Analytics: Screen() {
+        @Serializable data object AnalyticsView : Analytics()
+    }
+
+    @Serializable sealed class Chat: Screen() {
+        @Serializable data object ChatList : Chat()
     }
 }

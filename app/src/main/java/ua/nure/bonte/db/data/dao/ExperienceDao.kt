@@ -1,0 +1,17 @@
+package ua.nure.bonte.db.data.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+import ua.nure.bonte.db.data.entity.ExperienceEntity
+
+@Dao
+interface ExperienceDao {
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(item: ExperienceEntity)
+
+    @Query("SELECT * FROM ExperienceEntity")
+    fun getExperience(): Flow<ExperienceEntity>
+}

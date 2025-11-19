@@ -1,5 +1,6 @@
 package ua.nure.bonte.ui.profile.dashboard
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,7 +71,7 @@ class DashboardViewModel @Inject constructor(
         userRepository.getMe().collect { profile ->
             _state.update { s ->
                 s.copy(
-                    profile = profile
+                    profile = profile.profileEntity
                 )
             }
         }

@@ -13,8 +13,8 @@ import kotlinx.coroutines.CloseableCoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.auth.AuthRepositoryImpl
-import ua.nure.bonte.repository.db.DbRepository
-import ua.nure.bonte.repository.db.DbRepositoryImpl
+import ua.nure.bonte.db.DbRepository
+import ua.nure.bonte.db.DbRepositoryImpl
 import ua.nure.bonte.repository.token.TokenRepository
 import ua.nure.bonte.repository.token.TokenRepositoryImpl
 import ua.nure.bonte.repository.user.UserRepository

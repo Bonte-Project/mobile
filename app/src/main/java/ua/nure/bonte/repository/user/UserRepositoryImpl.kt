@@ -15,8 +15,9 @@ import kotlinx.coroutines.withContext
 import ua.nure.bonte.di.DbDeliveryDispatcher
 import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.Result
-import ua.nure.bonte.repository.db.DbRepository
-import ua.nure.bonte.repository.db.data.entity.ProfileEntity
+import ua.nure.bonte.db.DbRepository
+import ua.nure.bonte.db.data.entity.Profile
+import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.repository.dto.ProfileDataDto
 import ua.nure.bonte.repository.dto.ProfileDto
 import ua.nure.bonte.repository.dto.UserProfileRequest
@@ -88,7 +89,7 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     }
 
 
-    override fun getMe(): Flow<ProfileEntity> =
+    override fun getMe(): Flow<Profile> =
         dbRepository
             .dbFlow
             .flatMapLatest { db ->  db.profileDao.getProfile() }
