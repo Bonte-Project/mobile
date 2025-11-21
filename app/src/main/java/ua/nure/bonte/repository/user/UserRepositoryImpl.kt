@@ -62,8 +62,8 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     }
 
     override suspend fun patchMe(
-        firstName: String,
-        lastName: String,
+        firstName: String?,
+        lastName: String?,
         height: Int?,
         weight: Int?,
         age: Int?,
@@ -78,7 +78,6 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
                         height = height,
                         weight = weight,
                         age = age
-
                     )
                 )
 
