@@ -27,6 +27,7 @@ fun TrainerScreen(
             when(it) {
                 Trainer.Event.OnBack -> navController.navigateUp()
                 is Trainer.Event.OnNavigate -> navController.navigate(route = it.route)
+                is Trainer.Event.OnError -> TODO()
             }
         }
     }
