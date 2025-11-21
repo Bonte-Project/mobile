@@ -11,11 +11,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.repository.trainer.TrainerRepository
+import ua.nure.bonte.repository.user.UserRepository
+import ua.nure.bonte.repository.dto.ExperienceRequest
+import ua.nure.bonte.repository.dto.TrainerRequest
 import ua.nure.bonte.repository.dto.TrainerResponse
 import ua.nure.bonte.repository.Result
-import ua.nure.bonte.ui.trainer.Trainer.Event.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +27,7 @@ class TrainerViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(Trainer.State())
     val state = _state.onStart {
-        observerTrainer()
+        observerProfile()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
@@ -40,31 +41,96 @@ class TrainerViewModel @Inject constructor(
     val trainerState = _trainerState
 
     fun onAction(action: Trainer.Action) = viewModelScope.launch {
-        when(action) {
+        when (action) {
             Trainer.Action.OnBack -> _event.emit(Trainer.Event.OnBack)
             is Trainer.Action.OnNavigate -> _event.emit(Trainer.Event.OnNavigate(route = action.route))
-            Trainer.Action.OnCreateTrainer -> {
-            }
+            Trainer.Action.OnCreateTrainer -> createTrainer()
             Trainer.Action.LoadTrainer -> loadTrainer()
         }
     }
 
-    private fun observerTrainer() = viewModelScope.launch {
+    private fun observerProfile() = viewModelScope.launch {
         userRepository.getMe().collect { profile ->
             _state.update { s ->
                 s.copy(profile = profile)
             }
         }
-
         loadTrainer()
     }
 
-    private fun loadTrainer() = viewModelScope.launch {
-        when(val result = trainerRepository.loadTrainer()) {
+    fun loadTrainer() = viewModelScope.launch {
+        when (val result = trainerRepository.loadTrainer()) {
             is Result.Success -> _trainerState.value = result.data
             is Result.Error -> _event.emit(
                 Trainer.Event.OnError("Помилка завантаження тренера: ${result.error}")
             )
+        }
+    }
+
+    private fun createTrainer() = viewModelScope.launch {
+        val request = TrainerRequest(
+            bio = "",
+            certification = "",
+            specialization = "",
+            location = "",
+            isActive = true
+        )
+        when (val result = trainerRepository.createTrainer(request)) {
+            is Result.Success -> _trainerState.value = result.data
+            is Result.Error -> _event.emit(
+                Trainer.Event.OnError("Помилка створення тренера: ${result.error}")
+            )
+        }
+    }
+
+    fun updateTrainer(request: TrainerRequest) = viewModelScope.launch {
+        when (val result = trainerRepository.updateTrainer(request)) {
+            is Result.Success -> _trainerState.value = result.data
+            is Result.Error -> _event.emit(
+                Trainer.Event.OnError("Помилка оновлення тренера: ${result.error}")
+            )
+        }
+    }
+
+    fun getTrainerById(id: String) = viewModelScope.launch {
+        when (val result = trainerRepository.getTrainerById(id)) {
+            is Result.Success -> _trainerState.value = result.data
+            is Result.Error -> _event.emit(
+                Trainer.Event.OnError("Помилка отримання тренера: ${result.error}")
+            )
+        }
+    }
+
+    fun addExperience(request: ExperienceRequest) = viewModelScope.launch {
+        when (val result = trainerRepository.addExperience(request)) {
+            is Result.Success -> _trainerState.value = result.data
+            is Result.Error -> _event.emit(
+                Trainer.Event.OnError("Помилка додавання досвіду: ${result.error}")
+            )
+        }
+    }
+
+    fun updateExperience(experienceId: String, request: ExperienceRequest) = viewModelScope.launch {
+        when (val result = trainerRepository.updateExperience(experienceId, request)) {
+            is Result.Success -> _trainerState.value = result.data
+            is Result.Error -> _event.emit(
+                Trainer.Event.OnError("Помилка оновлення досвіду: ${result.error}")
+            )
+        }
+    }
+
+    fun deleteExperience(experienceId: String) = viewModelScope.launch {
+        when (val result = trainerRepository.deleteExperience(experienceId)) {
+            is Result.Success -> _trainerState.value = result.data
+            is Result.Error -> _event.emit(
+                Trainer.Event.OnError("Помилка видалення досвіду: ${result.error}")
+            )
+        }
+    }
+
+    fun observeTrainerFlow() = viewModelScope.launch {
+        trainerRepository.getTrainer().collect { trainerResponse ->
+            _trainerState.value = trainerResponse
         }
     }
 }
