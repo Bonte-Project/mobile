@@ -19,6 +19,8 @@ import ua.nure.bonte.repository.token.TokenRepository
 import ua.nure.bonte.repository.token.TokenRepositoryImpl
 import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.repository.user.UserRepositoryImpl
+import ua.nure.bonte.repository.trainer.TrainerRepository
+import ua.nure.bonte.repository.trainer.TrainerRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -67,4 +69,17 @@ object RepositoryModule {
         dbRepository = dbRepository,
         dbDeliveryDispatcher = dbDeliveryDispatcher
     )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideTrainerRepository(
+        httpClient: HttpClient,
+        @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
+        dbRepository: DbRepository,
+    ): TrainerRepository = TrainerRepositoryImpl(
+        httpClient = httpClient,
+        appDb = dbRepository.db,
+        dbDeliveryDispatcher = dbDeliveryDispatcher
+    )
+
 }
