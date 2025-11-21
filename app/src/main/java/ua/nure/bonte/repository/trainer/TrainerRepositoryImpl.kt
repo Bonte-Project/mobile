@@ -26,9 +26,10 @@ import ua.nure.bonte.repository.dto.TrainerRequest
 import ua.nure.bonte.repository.dto.TrainerResponse
 import ua.nure.bonte.repository.dto.mapper.toTrainerResponse
 import ua.nure.bonte.repository.safeCall
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TrainerRepositoryImpl(
+class TrainerRepositoryImpl @Inject constructor(
     private val httpClient: HttpClient,
     private val appDb: AppDb,
     @DbDeliveryDispatcher private val dbDeliveryDispatcher: CoroutineDispatcher
