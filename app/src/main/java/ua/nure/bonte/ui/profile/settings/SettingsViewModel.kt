@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.auth.AuthRepository
+import ua.nure.bonte.repository.token.TokenRepository
 import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.ui.auth.register.Register
 import ua.nure.bonte.ui.profile.settings.Settings
@@ -21,8 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository,
 ) : ViewModel() {
     private val TAG by lazy { SettingsViewModel::class.simpleName }
     private val _state = MutableStateFlow(Settings.State())
@@ -115,6 +117,14 @@ class SettingsViewModel @Inject constructor(
                         email = action.email
                     )
                 )
+            }
+
+            Settings.Action.OnSubscription -> {}
+
+            Settings.Action.OnLogOut -> {
+                tokenRepository.setToken(newToken = null)
+                tokenRepository.setUserName(newUserName = null)
+                _event.emit(Settings.Event.OnNavigate(route = Screen.Auth.SignIn))
             }
         }
     }

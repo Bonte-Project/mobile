@@ -19,6 +19,8 @@ object Settings {
         data class OnLastNameChange(val lastName: String?) : Settings.Action
         data class OnAvatarChange(val avatarUrl: String?) : Settings.Action
         data class OnEmailChange(val email: String?) : Action
+        data object OnSubscription : Action
+        data object OnLogOut : Action
 
     }
 
