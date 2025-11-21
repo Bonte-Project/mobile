@@ -13,5 +13,8 @@ interface ExperienceDao {
     suspend fun insert(item: ExperienceEntity)
 
     @Query("SELECT * FROM ExperienceEntity")
-    fun getExperience(): Flow<ExperienceEntity>
+    fun getExperience(): Flow<List<ExperienceEntity>>
+
+    @Query("DELETE FROM ExperienceEntity WHERE experienceId = :id")
+    suspend fun deleteById(id: String)
 }
