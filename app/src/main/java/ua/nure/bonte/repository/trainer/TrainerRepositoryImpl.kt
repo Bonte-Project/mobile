@@ -37,7 +37,7 @@ class TrainerRepositoryImpl @Inject constructor(
 
     override suspend fun loadTrainer(): Result<TrainerResponse, DataError> = withContext(dbDeliveryDispatcher) {
         safeCall<TrainerResponse> {
-            httpClient.get("/trainers/me")
+            httpClient.get("trainers/me")
         }.onSuccess { response ->
             val t = response.trainer
             val trainerEntity = TrainerEntity(
@@ -72,7 +72,7 @@ class TrainerRepositoryImpl @Inject constructor(
     override suspend fun createTrainer(request: TrainerRequest): Result<TrainerResponse, DataError> =
         withContext(dbDeliveryDispatcher) {
             safeCall<TrainerResponse> {
-                httpClient.post("/trainers") {
+                httpClient.post("trainers") {
                     setBody(request)
                 }
             }.onSuccess { response ->
@@ -109,7 +109,7 @@ class TrainerRepositoryImpl @Inject constructor(
     override suspend fun updateTrainer(request: TrainerRequest): Result<TrainerResponse, DataError> =
         withContext(dbDeliveryDispatcher) {
             safeCall<TrainerResponse> {
-                httpClient.put("/trainers/me") {
+                httpClient.put("trainers/me") {
                     setBody(request)
                 }
             }.onSuccess { response ->
@@ -146,14 +146,14 @@ class TrainerRepositoryImpl @Inject constructor(
     override suspend fun getTrainerById(id: String): Result<TrainerResponse, DataError> =
         withContext(dbDeliveryDispatcher) {
             safeCall<TrainerResponse> {
-                httpClient.get("/trainers/$id")
+                httpClient.get("trainers/$id")
             }
         }
 
     override suspend fun addExperience(request: ExperienceRequest): Result<TrainerResponse, DataError> =
         withContext(dbDeliveryDispatcher) {
             safeCall<TrainerResponse> {
-                httpClient.post("/trainers/me/experience") {
+                httpClient.post("trainers/me/experience") {
                     setBody(request)
                 }
             }.onSuccess { response ->
@@ -175,7 +175,7 @@ class TrainerRepositoryImpl @Inject constructor(
     override suspend fun updateExperience(experienceId: String, request: ExperienceRequest): Result<TrainerResponse, DataError> =
         withContext(dbDeliveryDispatcher) {
             safeCall<TrainerResponse> {
-                httpClient.put("/trainers/me/experience/$experienceId") {
+                httpClient.put("trainers/me/experience/$experienceId") {
                     setBody(request)
                 }
             }.onSuccess { response ->
@@ -196,7 +196,7 @@ class TrainerRepositoryImpl @Inject constructor(
     override suspend fun deleteExperience(experienceId: String): Result<TrainerResponse, DataError> =
         withContext(dbDeliveryDispatcher) {
             val deleteResult = safeCall<DeleteResponse> {
-                httpClient.delete("/trainers/me/experience/$experienceId")
+                httpClient.delete("trainers/me/experience/$experienceId")
             }
 
             return@withContext when (deleteResult) {
