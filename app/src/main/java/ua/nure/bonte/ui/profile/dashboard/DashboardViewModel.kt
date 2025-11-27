@@ -59,11 +59,6 @@ class DashboardViewModel @Inject constructor(
         loadMeJob?.cancel()
         loadMeJob = viewModelScope.launch {
             userRepository.loadMe()
-                .onSuccess {
-
-                }.onError {
-
-                }
         }
     }
 

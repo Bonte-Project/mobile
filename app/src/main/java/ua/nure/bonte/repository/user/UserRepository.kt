@@ -10,12 +10,12 @@ import ua.nure.bonte.repository.dto.ProfileDataDto
 interface UserRepository {
     suspend fun loadMe(): Result<ProfileDataDto, DataError>
     suspend fun patchMe(
-        firstName: String,
-        lastName: String,
-        height: Int?,
-        weight: Int?,
-        age: Int?,
-        avatarUrl: String?,
+        firstName: String? = null,
+        lastName: String? = null,
+        height: Int? = null,
+        weight: Int? = null,
+        age: Int? = null,
+        avatarUrl: String? = null,
     ): Result<ProfileDataDto, DataError>
 
     fun getMe(): Flow<Profile>

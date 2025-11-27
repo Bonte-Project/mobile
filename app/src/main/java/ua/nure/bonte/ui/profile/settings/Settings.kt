@@ -21,11 +21,15 @@ object Settings {
         data class OnEmailChange(val email: String?) : Action
         data object OnSubscription : Action
         data object OnLogOut : Action
+        data object OnDismissChangeAvatarDialog : Action
+        data object OnShowChangeAvatarDialog : Action
+
 
     }
 
     data class State(
         val profile: ProfileEntity? = null,
         val inProgress: Boolean = false,
+        val showChangeAvatarDialog: Boolean = false,
     )
 }

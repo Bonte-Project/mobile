@@ -30,6 +30,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import ua.nure.bonte.R
 import ua.nure.bonte.extension.firstName
 import ua.nure.bonte.extension.lastName
 import ua.nure.bonte.ui.compose.BonteButton
+import ua.nure.bonte.ui.compose.BonteChangeAvatarDialog
 import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteInputField
 import ua.nure.bonte.ui.compose.BonteScreen
@@ -108,14 +110,18 @@ private fun SettingsScreenContent(
                         .clip(shape = CircleShape)
                         .border(width = 1.dp, color = AppTheme.color.grey, shape = CircleShape),
                     model = state.profile?.avatarUrl,
-                    contentDescription = null
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
                 )
                 Icon(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(shape = CircleShape)
                         .background(color = AppTheme.color.active)
-                        .padding(2.dp),
+                        .padding(2.dp)
+                        .clickable {
+                            onAction(Settings.Action.OnShowChangeAvatarDialog)
+                        },
                     painter = painterResource(R.drawable.edit_icon),
                     tint = AppTheme.color.background,
                     contentDescription = null
@@ -284,6 +290,18 @@ private fun SettingsScreenContent(
                     modifier = Modifier.height(200.dp)
                 )
             }
+        }
+
+        if (state.showChangeAvatarDialog) {
+            BonteChangeAvatarDialog(
+                avatar = state.profile?.avatarUrl,
+                onDismiss = {
+                    onAction(Settings.Action.OnDismissChangeAvatarDialog)
+                },
+                onAvatarChange = {
+                    onAction(Settings.Action.OnAvatarChange(avatarUrl = it))
+                }
+            )
         }
     }
 }

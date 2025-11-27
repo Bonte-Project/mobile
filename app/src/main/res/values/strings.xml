@@ -69,4 +69,6 @@
     <string name="healthDetails">Health details</string>
     <string name="subscriptionPlan">Subscription plan</string>
     <string name="logOut">Log out</string>
+    <string name="avatar">Avatar URL</string>
+    <string name="check">Check</string>
 </resources>
