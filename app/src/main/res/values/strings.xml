@@ -66,4 +66,7 @@
     <string name="certification">Certification</string>
     <string name="cancel">Cancel</string>
     <string name="deleteProfile">Delete Profile</string>
+    <string name="healthDetails">Health details</string>
+    <string name="subscriptionPlan">Subscription plan</string>
+    <string name="logOut">Log out</string>
 </resources>

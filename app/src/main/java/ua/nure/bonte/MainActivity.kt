@@ -44,9 +44,9 @@ class MainActivity : ComponentActivity() {
                             BonteBottomNavigationBar(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 40.dp)
                                     .background(color = AppTheme.color.background)
-                                    .padding(top = AppTheme.dimension.small, start = AppTheme.dimension.small, end = AppTheme.dimension.small),
+                                    .navigationBarsPadding()
+                                    .padding(start = AppTheme.dimension.small, end = AppTheme.dimension.small),
                                 currentDestination = currentDestination,
                                 items = topLevelRoutes
                             ) { nestedGraphRoute ->
