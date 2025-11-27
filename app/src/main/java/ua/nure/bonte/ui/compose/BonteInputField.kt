@@ -31,10 +31,13 @@ fun BonteInputField(
     value: String? = null,
     isPassword: Boolean = false,
     errorText: String? = null,
+    readOnly: Boolean = false,
+    trailingIcon: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit
 ) {
     var isVisible by remember { mutableStateOf(false) }
     val isError = errorText != null
+
     val errorSupportingText: (@Composable () -> Unit)? = if (isError) {
         {
             Text(
@@ -45,19 +48,16 @@ fun BonteInputField(
             )
         }
     } else null
+
     if (isPassword) {
         OutlinedTextField(
             modifier = modifier,
-//            colors = TextFieldDefaults.colors(
-//                focusedTextColor = AppTheme.color.foreground,
-//                unfocusedTextColor = AppTheme.color.foreground,
-//                focusedContainerColor = AppTheme.color.background,
-//            ),
             textStyle = AppTheme.typography.regular,
             value = value ?: "",
             onValueChange = onValueChange,
             isError = isError,
             supportingText = errorSupportingText,
+            readOnly = readOnly,
 
             label = {
                 Text(
@@ -65,7 +65,6 @@ fun BonteInputField(
                     style = AppTheme.typography.regular.copy(
                         color = AppTheme.color.grey
                     )
-
                 )
             },
             visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -90,6 +89,8 @@ fun BonteInputField(
             onValueChange = onValueChange,
             isError = isError,
             supportingText = errorSupportingText,
+            readOnly = readOnly,
+
             label = {
                 Text(
                     text = label ?: "",
@@ -97,7 +98,8 @@ fun BonteInputField(
                         color = AppTheme.color.grey
                     )
                 )
-            }
+            },
+            trailingIcon = trailingIcon
         )
     }
 }
