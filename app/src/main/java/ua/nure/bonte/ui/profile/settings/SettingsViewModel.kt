@@ -4,16 +4,24 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.config.sendEditTimeout
 import ua.nure.bonte.extension.firstName
 import ua.nure.bonte.extension.lastName
 import ua.nure.bonte.navigation.Screen
@@ -30,10 +38,13 @@ class SettingsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val tokenRepository: TokenRepository,
 ) : ViewModel() {
-    private val TAG by lazy { SettingsViewModel::class.simpleName }
     private val _state = MutableStateFlow(Settings.State())
     val state = _state.onStart {
         observeMe()
+        observeAge()
+        observeWeight()
+        observeHeight()
+        observeFullName()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
@@ -65,14 +76,6 @@ class SettingsViewModel @Inject constructor(
                         )
                     )
                 }
-                patchProfile(
-                    firstName = state.value.profile?.fullName.firstName(),
-                    lastName = state.value.profile?.fullName.lastName(),
-                    height = state.value.profile?.height,
-                    weight = state.value.profile?.weight,
-                    age = state.value.profile?.age,
-                    avatarUrl = state.value.profile?.avatarUrl
-                )
             }
 
             is Settings.Action.OnWeightChange -> {
@@ -83,14 +86,6 @@ class SettingsViewModel @Inject constructor(
                         )
                     )
                 }
-                patchProfile(
-                    firstName = state.value.profile?.fullName.firstName(),
-                    lastName = state.value.profile?.fullName.lastName(),
-                    height = state.value.profile?.height,
-                    weight = state.value.profile?.weight,
-                    age = state.value.profile?.age,
-                    avatarUrl = state.value.profile?.avatarUrl
-                )
             }
 
             is Settings.Action.OnHeightChange -> {
@@ -101,14 +96,6 @@ class SettingsViewModel @Inject constructor(
                         )
                     )
                 }
-                patchProfile(
-                    firstName = state.value.profile?.fullName.firstName(),
-                    lastName = state.value.profile?.fullName.lastName(),
-                    height = state.value.profile?.height,
-                    weight = state.value.profile?.weight,
-                    age = state.value.profile?.age,
-                    avatarUrl = state.value.profile?.avatarUrl
-                )
             }
 
             is Settings.Action.OnAvatarChange -> {
@@ -120,14 +107,13 @@ class SettingsViewModel @Inject constructor(
                         showChangeAvatarDialog = false
                     )
                 }
-                Log.d(TAG, "onAction: ${state.value.profile}")
                 patchProfile(
                     firstName = state.value.profile?.fullName.firstName(),
                     lastName = state.value.profile?.fullName.lastName(),
                     height = state.value.profile?.height,
                     weight = state.value.profile?.weight,
                     age = state.value.profile?.age,
-                    avatarUrl = state.value.profile?.avatarUrl
+                    avatarUrl = action.avatarUrl
                 )
             }
 
@@ -145,14 +131,6 @@ class SettingsViewModel @Inject constructor(
                         )
                     )
                 }
-                patchProfile(
-                    firstName = state.value.profile?.fullName.firstName(),
-                    lastName = state.value.profile?.fullName.lastName(),
-                    height = state.value.profile?.height,
-                    weight = state.value.profile?.weight,
-                    age = state.value.profile?.age,
-                    avatarUrl = state.value.profile?.avatarUrl
-                )
             }
 
             is Settings.Action.OnLastNameChange -> {
@@ -169,14 +147,6 @@ class SettingsViewModel @Inject constructor(
                         )
                     )
                 }
-                patchProfile(
-                    firstName = state.value.profile?.fullName.firstName(),
-                    lastName = state.value.profile?.fullName.lastName(),
-                    height = state.value.profile?.height,
-                    weight = state.value.profile?.weight,
-                    age = state.value.profile?.age,
-                    avatarUrl = state.value.profile?.avatarUrl
-                )
             }
 
             is Settings.Action.OnEmailChange -> {
@@ -234,7 +204,6 @@ class SettingsViewModel @Inject constructor(
         avatarUrl: String? = null,
     ) {
         updateProfileJob?.cancel()
-        Log.d(TAG, "patchProfile: $avatarUrl")
         updateProfileJob = viewModelScope.launch {
             userRepository.patchMe(
                 firstName = firstName,
@@ -247,4 +216,73 @@ class SettingsViewModel @Inject constructor(
         }
 
     }
+
+    @OptIn(FlowPreview::class)
+    private fun observeAge() {
+        state.mapNotNull { it.profile?.age }
+            .distinctUntilChanged()
+            .debounce(sendEditTimeout)
+            .onEach { query ->
+                patchProfile(
+                    firstName = state.value.profile?.fullName.firstName(),
+                    lastName = state.value.profile?.fullName.lastName(),
+                    height = state.value.profile?.height,
+                    weight = state.value.profile?.weight,
+                    age = query,
+                    avatarUrl = state.value.profile?.avatarUrl
+                )
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeWeight() {
+        state.mapNotNull { it.profile?.weight }
+            .distinctUntilChanged()
+            .debounce(sendEditTimeout)
+            .onEach { query ->
+                patchProfile(
+                    firstName = state.value.profile?.fullName.firstName(),
+                    lastName = state.value.profile?.fullName.lastName(),
+                    height = state.value.profile?.height,
+                    weight = query,
+                    age = state.value.profile?.age,
+                    avatarUrl = state.value.profile?.avatarUrl
+                )
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeHeight() {
+        state.mapNotNull { it.profile?.height }
+            .distinctUntilChanged()
+            .debounce(sendEditTimeout)
+            .onEach { query ->
+                patchProfile(
+                    firstName = state.value.profile?.fullName.firstName(),
+                    lastName = state.value.profile?.fullName.lastName(),
+                    height = query,
+                    weight = state.value.profile?.weight,
+                    age = state.value.profile?.age,
+                    avatarUrl = state.value.profile?.avatarUrl
+                )
+            }.launchIn(viewModelScope)
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeFullName() {
+        state.mapNotNull { it.profile?.fullName }
+            .distinctUntilChanged()
+            .debounce(sendEditTimeout)
+            .onEach { query ->
+                patchProfile(
+                    firstName = query.firstName(),
+                    lastName = query.lastName(),
+                    height = state.value.profile?.height,
+                    weight = state.value.profile?.weight,
+                    age = state.value.profile?.age,
+                    avatarUrl = state.value.profile?.avatarUrl
+                )
+            }.launchIn(viewModelScope)
+    }
+
 }

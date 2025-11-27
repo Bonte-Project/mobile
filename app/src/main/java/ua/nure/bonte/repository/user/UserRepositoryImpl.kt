@@ -1,5 +1,6 @@
 package ua.nure.bonte.repository.user
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
@@ -31,33 +32,17 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     private val dbRepository: DbRepository,
     @DbDeliveryDispatcher private val dbDeliveryDispatcher: CloseableCoroutineDispatcher,
 ) : UserRepository {
-    override suspend fun loadMe(): Result<ProfileDataDto, DataError> = withContext(Dispatchers.IO) {
-        val profile = dbRepository.db.profileDao.getProfileEntity()
-        if (profile == null) {
-            safeCall<ProfileDataDto> {
-                httpClient.get("users/me") {
 
-                }
-            }.onSuccess { profileDataDto ->
-                dbRepository.db.profileDao
-                    .insert(
-                        profileDataDto.user.toEntity()
-                    )
+    override suspend fun loadMe(): Result<ProfileDataDto, DataError> = withContext(Dispatchers.IO) {
+        safeCall<ProfileDataDto> {
+            httpClient.get("users/me") {
+
             }
-        } else {
-            Result.Success (ProfileDataDto("", user = ProfileDto(
-                id = profile.id,
-                email = profile.email ?: "",
-                fullName = profile.fullName ?: "",
-                avatarUrl = profile.avatarUrl,
-                role = profile.role,
-                isEmailVerified = profile.isEmailVerified,
-                height = profile.height,
-                weight = profile.weight,
-                age = profile.age,
-                createdAt = profile.createdAt,
-                isPremium = profile.isPremium
-            )))
+        }.onSuccess { profileDataDto ->
+            dbRepository.db.profileDao
+                .insert(
+                    profileDataDto.user.toEntity()
+                )
         }
     }
 
@@ -80,10 +65,9 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
                         age = age
                     )
                 )
-
             }
-        }.onSuccess {
-            dbRepository.db.profileDao.insert(it.user.toEntity())
+        }.onSuccess { profileDataDto ->
+            dbRepository.db.profileDao.insert(profileDataDto.user.toEntity())
         }
     }
 

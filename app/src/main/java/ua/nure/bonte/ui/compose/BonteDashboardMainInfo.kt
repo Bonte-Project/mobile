@@ -1,5 +1,6 @@
 package ua.nure.bonte.ui.compose
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,10 +40,9 @@ fun BonteDashboardMainInfo(
         Row(verticalAlignment = Alignment.CenterVertically) {
 
             AsyncImage(
-                model = avatarUrl ?: R.drawable.profile_placeholder,
+                model = avatarUrl,
                 contentDescription = "User Avatar",
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.profile_placeholder),
                 error = painterResource(R.drawable.profile_placeholder),
                 modifier = Modifier
                     .size(100.dp)
