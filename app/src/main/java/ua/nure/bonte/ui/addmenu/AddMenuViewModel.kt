@@ -11,16 +11,19 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.repository.dto.ActivityLogRequest
 import ua.nure.bonte.repository.dto.CreateSleepLogDto
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.sleeplog.SleepLogRepository
+import ua.nure.bonte.repository.activity.ActivityRepository
 import ua.nure.bonte.ui.addmenu.AddMenu.Event.*
 import javax.inject.Inject
 
 @HiltViewModel
 class AddMenuViewModel @Inject constructor(
-    private val sleepLogRepository: SleepLogRepository
+    private val sleepLogRepository: SleepLogRepository,
+    private val activityLogRepository: ActivityRepository
 ) : ViewModel() {
     private val TAG by lazy { AddMenuViewModel::class.simpleName }
 
@@ -44,24 +47,19 @@ class AddMenuViewModel @Inject constructor(
                 _event.emit(OnNavigate(route = action.route))
             }
 
-            AddMenu.Action.OnAddFoodClick -> {
-                // TODO: Implement add food logic
-                Log.d(TAG, "Add food clicked")
-                _event.emit(OnBack)
-            }
-
             AddMenu.Action.OnUpdateSleepLogClick -> {
                 _state.update { it.copy(showSleepDialog = true) }
             }
 
             AddMenu.Action.OnUpdateActivityLogClick -> {
-                // TODO: Implement update activity log logic
-                Log.d(TAG, "Update activity log clicked")
-                _event.emit(OnBack)
+                _state.update { it.copy(showActivityDialog = true) }
             }
 
             AddMenu.Action.OnDismissSleepDialog -> {
                 _state.update { it.copy(showSleepDialog = false) }
+            }
+            AddMenu.Action.OnDismissActivityDialog ->{
+                _state.update { it.copy(showActivityDialog = false) }
             }
 
             is AddMenu.Action.OnSaveSleepLog -> {
@@ -80,6 +78,26 @@ class AddMenuViewModel @Inject constructor(
                         _event.emit(OnBack)
                     }.onError { error ->
                         Log.e(TAG, "Failed to save sleep log: $error")
+                        _state.update { it.copy(inProgress = false) }
+                    }
+            }
+            is AddMenu.Action.OnSaveActivityLog -> {
+                _state.update { it.copy(inProgress = true) }
+
+                val activityLogRequest = ActivityLogRequest(
+                    activityType = action.activityType,
+                    intensity = action.intensity,
+                    durationMinutes = action.durationMinutes,
+                    completedAt = action.completedAt,
+                )
+
+                activityLogRepository.createActivityLog(activityLogRequest)
+                    .onSuccess {
+                        Log.d(TAG, "Activity log saved successfully: $it")
+                        _state.update { it.copy(showActivityDialog = false, inProgress = false) }
+                        _event.emit(OnBack)
+                    }.onError { error ->
+                        Log.e(TAG, "Failed to save activity log: $error")
                         _state.update { it.copy(inProgress = false) }
                     }
             }

@@ -69,6 +69,21 @@
     <string name="healthDetails">Health details</string>
     <string name="subscriptionPlan">Subscription plan</string>
     <string name="logOut">Log out</string>
+    <string name="addFood">Add Food</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="snack">Snack</string>
+    <string name="logFood">Log food</string>
+    <string name="eatenAt">Eaten at</string>
+    <string name="foodName">Food name</string>
+    <string name="grams">Grams</string>
+    <string name="energyKcal">Energy kcal</string>
+    <string name="macronutrients">Macronutrients(per 100g)</string>
+    <string name="fats">Fats (g)</string>
+    <string name="carbs">Carbs (g)</string>
+    <string name="fiber">Fiber (g)</string>
+    <string name="protein">Protein (g)</string>
     <string name="avatar">Avatar URL</string>
     <string name="check">Check</string>
     <string name="sleep_duration">Sleep duration</string>
@@ -83,4 +98,10 @@
     <string name="update_sleep_log">Update Sleep log</string>
     <string name="update_activity_log">Update Activity log</string>
     <string name="close">Close</string>
+    <string name="logActivity">Log activity</string>
+    <string name="completedAt">Completed at</string>
+    <string name="activityType">Activity type</string>
+    <string name="duration">Duration(min)</string>
+    <string name="intensity">Intensity</string>
+    <string name="updateGoal">UpdateGoal</string>
 </resources>

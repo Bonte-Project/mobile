@@ -18,11 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.nure.bonte.R
+import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.ui.compose.BonteButton
 import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteHeaderType
 import ua.nure.bonte.ui.compose.BonteScreen
 import ua.nure.bonte.ui.compose.SleepLogDialog
+import ua.nure.bonte.ui.compose.ActivityLogDialog
+import ua.nure.bonte.ui.profile.dashboard.Dashboard
 import ua.nure.bonte.ui.theme.AppTheme
 
 @Composable
@@ -76,7 +79,7 @@ private fun AddMenuScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.add_food),
                 onClick = {
-                    onAction(AddMenu.Action.OnAddFoodClick)
+                    onAction(AddMenu.Action.OnNavigate(Screen.Profile.Nutrition))
                 }
             )
 
@@ -102,6 +105,14 @@ private fun AddMenuScreenContent(
                 onDismiss = { onAction(AddMenu.Action.OnDismissSleepDialog) },
                 onSave = { startTime, endTime, quality ->
                     onAction(AddMenu.Action.OnSaveSleepLog(startTime, endTime, quality))
+                }
+            )
+        }
+        if (state.showActivityDialog) {
+            ActivityLogDialog(
+                onDismiss = { onAction(AddMenu.Action.OnDismissActivityDialog) },
+                onLog = {activityType, intensity, durationMinutes, completedAt ->
+                    onAction(AddMenu.Action.OnSaveActivityLog(activityType, intensity, durationMinutes, completedAt))
                 }
             )
         }

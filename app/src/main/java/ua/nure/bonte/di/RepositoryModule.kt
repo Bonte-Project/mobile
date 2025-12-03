@@ -23,6 +23,11 @@ import ua.nure.bonte.repository.trainer.TrainerRepository
 import ua.nure.bonte.repository.trainer.TrainerRepositoryImpl
 import ua.nure.bonte.repository.sleeplog.SleepLogRepository
 import ua.nure.bonte.repository.sleeplog.SleepLogRepositoryImpl
+import ua.nure.bonte.repository.nutrition.NutritionRepository
+import ua.nure.bonte.repository.nutrition.NutritionRepositoryImpl
+import ua.nure.bonte.db.data.AppDb
+import ua.nure.bonte.repository.activity.ActivityRepository
+import ua.nure.bonte.repository.activity.ActivityRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -95,4 +100,28 @@ object RepositoryModule {
         appDb = dbRepository.db,
         dbDispatcher = dbDispatcher
     )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideNutritionRepository(
+        httpClient: HttpClient,
+        @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
+        dbRepository: DbRepository,
+    ): NutritionRepository = NutritionRepositoryImpl(
+        httpClient = httpClient,
+        appDb = dbRepository.db,
+        dbDispatcher = dbDeliveryDispatcher
+    )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideActivityRepository(
+        httpClient: HttpClient,
+        @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
+        dbRepository: DbRepository,
+    ): ActivityRepository = ActivityRepositoryImpl(
+        httpClient = httpClient,
+        appDb = dbRepository.db,
+        dbDispatcher = dbDeliveryDispatcher
+    )
+
 }
