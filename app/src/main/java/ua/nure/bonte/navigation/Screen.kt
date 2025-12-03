@@ -14,6 +14,7 @@ sealed class Screen {
     @Serializable sealed class Profile: Screen() {
         @Serializable data object Dashboard : Profile()
         @Serializable data object Settings : Profile()
+        @Serializable data object AddMenu : Profile()
     }
 
     @Serializable sealed class Trainer: Screen() {

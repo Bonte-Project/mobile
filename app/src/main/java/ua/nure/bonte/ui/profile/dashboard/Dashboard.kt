@@ -12,6 +12,7 @@ object Dashboard {
     sealed interface Action {
         data object OnBack : Action
         data class OnNavigate(val route: Screen) : Action
+        data object OnAddButtonClick : Action
     }
 
     data class State(

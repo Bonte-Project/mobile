@@ -21,6 +21,8 @@ import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.repository.user.UserRepositoryImpl
 import ua.nure.bonte.repository.trainer.TrainerRepository
 import ua.nure.bonte.repository.trainer.TrainerRepositoryImpl
+import ua.nure.bonte.repository.sleeplog.SleepLogRepository
+import ua.nure.bonte.repository.sleeplog.SleepLogRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -82,4 +84,15 @@ object RepositoryModule {
         dbDeliveryDispatcher = dbDeliveryDispatcher
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideSleepLogRepository(
+        httpClient: HttpClient,
+        dbRepository: DbRepository,
+        @DbDeliveryDispatcher dbDispatcher: CloseableCoroutineDispatcher
+    ): SleepLogRepository = SleepLogRepositoryImpl(
+        httpClient = httpClient,
+        appDb = dbRepository.db,
+        dbDispatcher = dbDispatcher
+    )
 }

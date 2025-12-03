@@ -1,6 +1,5 @@
 package ua.nure.bonte.ui.profile.dashboard
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.auth.AuthRepository
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
@@ -52,6 +52,9 @@ class DashboardViewModel @Inject constructor(
                 _event.emit(OnNavigate(route = action.route))
             }
 
+            Dashboard.Action.OnAddButtonClick -> {
+                _event.emit(OnNavigate(route = Screen.Profile.AddMenu))
+            }
         }
     }
 
@@ -59,6 +62,11 @@ class DashboardViewModel @Inject constructor(
         loadMeJob?.cancel()
         loadMeJob = viewModelScope.launch {
             userRepository.loadMe()
+                .onSuccess {
+
+                }.onError {
+
+                }
         }
     }
 
@@ -72,4 +80,3 @@ class DashboardViewModel @Inject constructor(
         }
     }
 }
-

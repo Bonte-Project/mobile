@@ -7,11 +7,12 @@ import ua.nure.bonte.db.data.dao.ExperienceDao
 import ua.nure.bonte.db.data.dao.ProfileDao
 import ua.nure.bonte.db.data.dao.TrainerDao
 import ua.nure.bonte.db.data.dao.TrainerToExperienceDao
+import ua.nure.bonte.db.data.dao.SleepLogDao
 import ua.nure.bonte.db.data.entity.ExperienceEntity
 import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.db.data.entity.TrainerEntity
 import ua.nure.bonte.db.data.entity.TrainerToExperienceEntity
-
+import ua.nure.bonte.db.data.entity.SleepLogEntity
 
 @Database(
     entities = [
@@ -19,8 +20,9 @@ import ua.nure.bonte.db.data.entity.TrainerToExperienceEntity
         TrainerEntity::class,
         ExperienceEntity::class,
         TrainerToExperienceEntity::class,
+        SleepLogEntity::class,
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {
@@ -28,4 +30,5 @@ abstract class AppDb : RoomDatabase() {
     abstract val trainerDao: TrainerDao
     abstract val experienceDao: ExperienceDao
     abstract val trainerToExperienceDao: TrainerToExperienceDao
+    abstract val sleepLogDao: SleepLogDao
 }
