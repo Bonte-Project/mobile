@@ -71,4 +71,16 @@
     <string name="logOut">Log out</string>
     <string name="avatar">Avatar URL</string>
     <string name="check">Check</string>
+    <string name="sleep_duration">Sleep duration</string>
+    <string name="start_time">Start time</string>
+    <string name="end_time">End time</string>
+    <string name="sleep_quality">Sleep quality</string>
+    <string name="rate_your_sleep_quality">Rate your sleep quality (1-10)</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="what_are_you_adding">What are you adding?</string>
+    <string name="add_food">Add Food</string>
+    <string name="update_sleep_log">Update Sleep log</string>
+    <string name="update_activity_log">Update Activity log</string>
+    <string name="close">Close</string>
 </resources>
