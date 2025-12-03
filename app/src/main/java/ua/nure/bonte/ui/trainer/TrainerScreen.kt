@@ -186,8 +186,6 @@ private fun TrainerScreenContent(
                                 ))
                             }
                         )
-
-                        // 🚀 ІНТЕГРАЦІЯ DATE PICKER: startDate (змінна)
                         DatePickerInputField(
                             modifier = Modifier.fillMaxWidth().padding(top = AppTheme.dimension.small),
                             label = stringResource(R.string.startDate),
@@ -197,7 +195,7 @@ private fun TrainerScreenContent(
                                     item.experienceId,
                                     item.title,
                                     item.description,
-                                    it, // New Start Date
+                                    it,
                                     item.endDate
                                 ))
                             }
@@ -215,7 +213,7 @@ private fun TrainerScreenContent(
                                     item.title,
                                     item.description,
                                     item.startDate,
-                                    it // New End Date
+                                    it
                                 ))
                             }
                         )
@@ -236,13 +234,6 @@ private fun TrainerScreenContent(
                         enabled = true
                     ) {
                         onAction(Trainer.Action.OnSaveProfile)
-                    }
-
-                    BonteButton(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.dimension.normal),
-                        text = stringResource(R.string.deleteProfile),
-                        enabled = false
-                    ) {
                     }
                 }
             }

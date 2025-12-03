@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import ua.nure.bonte.ui.addmenu.AddMenuScreen
+import ua.nure.bonte.ui.nutrition.NutritionScreen
 import ua.nure.bonte.ui.profile.dashboard.DashboardScreen
 import ua.nure.bonte.ui.profile.settings.SettingsScreen
 
@@ -27,6 +28,12 @@ fun NavGraphBuilder.profileGraph(navController: NavController) {
         }
         composable<Screen.Profile.AddMenu> {
             AddMenuScreen(
+                viewModel = hiltViewModel(),
+                navController = navController
+            )
+        }
+        composable<Screen.Profile.Nutrition> {
+            NutritionScreen(
                 viewModel = hiltViewModel(),
                 navController = navController
             )

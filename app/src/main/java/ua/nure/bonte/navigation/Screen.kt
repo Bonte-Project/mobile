@@ -15,6 +15,7 @@ sealed class Screen {
         @Serializable data object Dashboard : Profile()
         @Serializable data object Settings : Profile()
         @Serializable data object AddMenu : Profile()
+        @Serializable data object Nutrition : Profile()
     }
 
     @Serializable sealed class Trainer: Screen() {

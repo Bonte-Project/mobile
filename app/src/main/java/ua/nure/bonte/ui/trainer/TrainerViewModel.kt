@@ -46,7 +46,6 @@ class TrainerViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     private val _trainerState = MutableStateFlow<TrainerResponse?>(null)
-    val trainerState = _trainerState
     private var trainerLoaded = false
 
     init {
