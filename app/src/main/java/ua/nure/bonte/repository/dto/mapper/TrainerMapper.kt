@@ -18,7 +18,8 @@ fun TrainerEntity.toTrainerResponse(experiences: List<ExperienceEntity> = emptyL
             specialization = this.specialization,
             location = this.location,
             isActive = this.isActive,
-            experience = expDto
+            experience = expDto,
+            createdAt = ""
         )
     )
 }
@@ -33,3 +34,23 @@ fun ExperienceEntity.toDto(): ExperienceDto {
         endDate = this.endDate
     )
 }
+
+
+fun TrainerDto.toEntity() = TrainerEntity(
+    trainerId = id,
+    userId = userId,
+    bio = bio,
+    certification = certification,
+    specialization = specialization,
+    location = location,
+    isActive = isActive
+)
+
+fun ExperienceDto.toEntity() = ExperienceEntity(
+    experienceId = id,
+    trainerId = trainerId,
+    title = title,
+    description = description,
+    startDate = startDate,
+    endDate = endDate
+)

@@ -8,7 +8,7 @@ data class ExperienceEntity(
     @PrimaryKey val experienceId: String,
     val trainerId: String,
     val title: String,
-    val description: String,
-    val startDate: String,
-    val endDate: String
+    val description: String?,
+    val startDate: String?,
+    val endDate: String?,
 )

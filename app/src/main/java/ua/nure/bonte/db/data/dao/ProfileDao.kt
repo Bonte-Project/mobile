@@ -13,9 +13,9 @@ interface ProfileDao {
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: ProfileEntity)
 
-    @Query("SELECT * FROM profileentity LIMIT 1")
+    @Query("SELECT * FROM profileentity WHERE isOwned == true")
     fun getProfile(): Flow<Profile>
 
-    @Query("SELECT * FROM profileentity LIMIT 1")
+    @Query("SELECT * FROM profileentity WHERE isOwned == true")
     fun getProfileEntity(): ProfileEntity?
 }
