@@ -22,7 +22,7 @@ import ua.nure.bonte.db.data.entity.SleepLogEntity
         TrainerToExperienceEntity::class,
         SleepLogEntity::class,
     ],
-    version = 3
+    version = 4
 )
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {

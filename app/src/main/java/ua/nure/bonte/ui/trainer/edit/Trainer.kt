@@ -1,7 +1,6 @@
-package ua.nure.bonte.ui.trainer
+package ua.nure.bonte.ui.trainer.edit
 
 import ua.nure.bonte.db.data.entity.Profile
-import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.dto.ExperienceRequest
 
@@ -30,9 +29,9 @@ object Trainer {
         data class OnExperienceChange(
             val experienceId: String,
             val title: String,
-            val description: String,
-            val startDate: String,
-            val endDate: String
+            val description: String? = null,
+            val startDate: String? = null,
+            val endDate: String? = null,
         ) : Action
         data class OnAddExperienceWithData(val request: ExperienceRequest) : Action
     }

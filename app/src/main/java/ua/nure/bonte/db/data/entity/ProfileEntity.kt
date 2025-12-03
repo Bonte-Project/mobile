@@ -18,6 +18,7 @@ data class ProfileEntity(
     val age: Int? = null,
     val createdAt: String,
     val isPremium: Boolean,
+    val isOwned: Boolean = false,
 ) {
     companion object {
         val profilePreview = ProfileEntity(

@@ -13,7 +13,7 @@ data class TrainerEntity(
     val bio: String,
     val certification: String,
     val specialization: String,
-    val location: String,
+    val location: String?,
     val isActive: Boolean,
 )
 
@@ -23,6 +23,11 @@ data class Trainer(
         parentColumn = "trainerId",
         entityColumn = "experienceId",
         associateBy = Junction(TrainerToExperienceEntity::class)
-    ) val experience: List<ExperienceEntity>?
-
+    ) val experience: List<ExperienceEntity>?,
+    @Relation(
+        parentColumn = "userId",
+        entityColumn = "id",
+        entity = ProfileEntity::class
+    ) val profile: ProfileEntity?
 )
+

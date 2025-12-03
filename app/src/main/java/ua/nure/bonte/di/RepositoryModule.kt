@@ -81,6 +81,7 @@ object RepositoryModule {
     ): TrainerRepository = TrainerRepositoryImpl(
         httpClient = httpClient,
         appDb = dbRepository.db,
+        dbRepository = dbRepository,
         dbDeliveryDispatcher = dbDeliveryDispatcher
     )
 

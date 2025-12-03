@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import ua.nure.bonte.R
 import ua.nure.bonte.repository.dto.ExperienceRequest
 import ua.nure.bonte.ui.theme.AppTheme
-import ua.nure.bonte.ui.trainer.Trainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

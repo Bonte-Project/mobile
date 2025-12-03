@@ -3,6 +3,7 @@ package ua.nure.bonte.repository.user
 import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.patch
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.CloseableCoroutineDispatcher
@@ -41,7 +42,7 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
         }.onSuccess { profileDataDto ->
             dbRepository.db.profileDao
                 .insert(
-                    profileDataDto.user.toEntity()
+                    profileDataDto.user.toEntity().copy(isOwned = true)
                 )
         }
     }
@@ -80,4 +81,15 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
             .catch {
                 it.printStackTrace()
             }
+
+    override suspend fun getUserById(id: String): Result<ProfileDataDto, DataError> = withContext(
+        Dispatchers.IO) {
+        safeCall<ProfileDataDto> {
+            httpClient.get("users/$id")
+        }.onSuccess {
+            dbRepository.db.profileDao.insert(
+                it.user.toEntity()
+            )
+        }
+    }
 }

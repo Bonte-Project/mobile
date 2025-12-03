@@ -49,7 +49,7 @@
     <string name="accountVerificationMessagePart2">and type the code we sent you\nStill no code?</string>
     <string name="verifyCode">Verify code</string>
     <string name="newPassword">Create new password</string>
-    <string name="trainer">Trainer</string>
+    <string name="trainer">Trainers</string>
     <string name="analytics">Analytics</string>
     <string name="chat">Chats</string>
     <string name="create">Create</string>
@@ -83,4 +83,5 @@
     <string name="update_sleep_log">Update Sleep log</string>
     <string name="update_activity_log">Update Activity log</string>
     <string name="close">Close</string>
+    <string name="trainerList">Trainers</string>
 </resources>
