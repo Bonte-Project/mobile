@@ -9,8 +9,10 @@ interface NutritionGoalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(goal: NutritionGoalEntity)
 
-    @Query("SELECT * FROM NutritionGoalEntity WHERE userId = :userId")
-    fun getGoal(userId: String): Flow<NutritionGoalEntity?>
+    @Query("SELECT * FROM NutritionGoalEntity WHERE userId = :userId LIMIT 1")
+    fun getGoalByUserId(userId: String): Flow<NutritionGoalEntity?> // Змінив назву
+    @Query("SELECT * FROM NutritionGoalEntity LIMIT 1")
+    fun getGoal(): Flow<NutritionGoalEntity?>
 
     @Query("DELETE FROM NutritionGoalEntity WHERE userId = :userId")
     suspend fun deleteByUserId(userId: String)

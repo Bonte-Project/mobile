@@ -103,5 +103,5 @@
     <string name="activityType">Activity type</string>
     <string name="duration">Duration(min)</string>
     <string name="intensity">Intensity</string>
-    <string name="updateGoal">UpdateGoal</string>
+    <string name="updateGoal">Update Goal</string>
 </resources>

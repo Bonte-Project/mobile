@@ -26,6 +26,10 @@ import ua.nure.bonte.ui.compose.BonteScreen
 import ua.nure.bonte.ui.compose.LogFoodDialog
 import ua.nure.bonte.ui.theme.AppTheme
 import androidx.annotation.StringRes
+import ua.nure.bonte.navigation.Screen
+import ua.nure.bonte.ui.addmenu.AddMenu
+import ua.nure.bonte.ui.compose.BonteAddGoalDialog
+import ua.nure.bonte.ui.compose.SleepLogDialog
 
 @Composable
 fun NutritionScreen(
@@ -87,14 +91,21 @@ private fun NutritionScreenContent(
                     .padding(vertical = AppTheme.dimension.small),
                 text = stringResource(R.string.updateGoal),
             ) {
-
+                onAction(Nutrition.Action.OnUpdateGoalClick)
             }
             MealTypeButton("Breakfast", R.string.breakfast)
             MealTypeButton("Lunch", R.string.lunch)
             MealTypeButton("Dinner", R.string.dinner)
             MealTypeButton("Snack", R.string.snack)
         }
-
+        if (state.showAddGoalDialog) {
+            BonteAddGoalDialog(
+                onDismiss = { onAction(Nutrition.Action.OnDismissAddGoalDialog) },
+                onLog = { calories, protein, carbs, fat ->
+                    onAction(Nutrition.Action.OnSaveGoal(calories, protein, carbs, fat))
+                }
+            )
+        }
         selectedMealType?.let { mealType ->
             LogFoodDialog(
                 mealType = mealType,
