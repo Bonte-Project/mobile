@@ -10,7 +10,7 @@ import ua.nure.bonte.db.data.entity.ExperienceEntity
 @Dao
 interface ExperienceDao {
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(item: ExperienceEntity)
+    suspend fun insert(list: List<ExperienceEntity>)
 
     @Query("SELECT * FROM ExperienceEntity")
     fun getExperience(): Flow<List<ExperienceEntity>>

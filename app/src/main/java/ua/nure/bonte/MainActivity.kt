@@ -87,7 +87,7 @@ fun showBottomNavigationBar(navDestination: NavDestination?) =
         destination.route in listOf(
             Screen.Profile.Dashboard::class.qualifiedName,
             Screen.Profile.Settings::class.qualifiedName,
-            Screen.Trainer.TrainerProfile::class.qualifiedName,
+            Screen.Trainer.TrainerList::class.qualifiedName,
             Screen.Chat.ChatList::class.qualifiedName,
             Screen.Analytics.AnalyticsView::class.qualifiedName
         )

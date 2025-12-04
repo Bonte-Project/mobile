@@ -1,4 +1,4 @@
-package ua.nure.bonte.ui.trainer
+package ua.nure.bonte.ui.trainer.edit
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -16,15 +16,13 @@ import ua.nure.bonte.ui.theme.AppTheme
 import ua.nure.bonte.R
 import androidx.compose.ui.res.stringResource
 import ua.nure.bonte.repository.dto.ExperienceRequest
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.PaddingValues
 import java.time.ZoneId
 import java.time.LocalDate
-import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 private fun convertISOToMillis(isoString: String): Long? {
     return try {
-        val localDate = LocalDate.parse(isoString.substring(0, 10), java.time.format.DateTimeFormatter.ISO_LOCAL_DATE)
+        val localDate = LocalDate.parse(isoString.substring(0, 10), DateTimeFormatter.ISO_LOCAL_DATE)
         localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
     } catch (e: Exception) {
         null
@@ -132,7 +130,7 @@ private fun TrainerScreenContent(
 
                 itemsIndexed(experienceList) { _, item ->
                     val minDateMillis = remember(item.startDate) {
-                        item.startDate.takeIf { it.isNotBlank() }?.let { convertISOToMillis(it) }
+                        item.startDate.takeIf { it?.isNotBlank() == true }?.let { convertISOToMillis(it) }
                     }
                     val todayMillis = remember {
                         LocalDate.now()
@@ -189,7 +187,7 @@ private fun TrainerScreenContent(
                         DatePickerInputField(
                             modifier = Modifier.fillMaxWidth().padding(top = AppTheme.dimension.small),
                             label = stringResource(R.string.startDate),
-                            value = item.startDate,
+                            value = item.startDate ?: "",
                             onValueChange = {
                                 onAction(Trainer.Action.OnExperienceChange(
                                     item.experienceId,
@@ -204,7 +202,7 @@ private fun TrainerScreenContent(
                         DatePickerInputField(
                             modifier = Modifier.fillMaxWidth().padding(top = AppTheme.dimension.small),
                             label = stringResource(R.string.endDate),
-                            value = item.endDate,
+                            value = item.endDate ?: "",
                             minDateMillis = minDateMillis, 
                             maxDateMillis = todayMillis,
                             onValueChange = {

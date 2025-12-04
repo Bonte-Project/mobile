@@ -20,4 +20,6 @@ interface UserRepository {
 
     fun getMe(): Flow<Profile>
 
+    suspend fun getUserById(id: String): Result<ProfileDataDto, DataError>
+
 }
