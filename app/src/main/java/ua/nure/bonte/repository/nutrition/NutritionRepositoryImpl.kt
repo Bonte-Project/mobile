@@ -1,4 +1,5 @@
 package ua.nure.bonte.repository.nutrition
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.*
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,15 +24,17 @@ class NutritionRepositoryImpl @Inject constructor(
 ) : NutritionRepository {
     private val nutritionGoalDao get() = appDb.nutritionGoalDao
 
-    override suspend fun getGoal(): Result<NutritionGoalRequest, DataError> = withContext(dbDispatcher) {
-        safeCall<NutritionGoalDto> {
-            httpClient.get("nutrition-goals")
-        }.map { dto ->
-            val entity = dto.toEntity()
-            nutritionGoalDao.insert(entity)
-            dto.toRequest()
+    override suspend fun getGoal(): Result<NutritionGoalRequest, DataError> =
+        withContext(dbDispatcher) {
+            safeCall<NutritionGoalResponse> {
+                httpClient.get("nutrition-goals")
+            }.map { response ->
+                val dto = response.goal
+                nutritionGoalDao.insert(dto.toEntity())
+                dto.toRequest()
+            }
         }
-    }
+
 
     override suspend fun createOrUpdateGoals(request: NutritionGoalRequest): Result<NutritionGoalDto, DataError> =
         withContext(dbDispatcher) {
@@ -62,6 +65,18 @@ class NutritionRepositoryImpl @Inject constructor(
         nutritionLogDao.getAllLogs()
             .map { list -> list.map { it.toDto() } }
             .flowOn(dbDispatcher)
+
+    override suspend fun refreshNutritionLogs(): Result<Unit, DataError> =
+        withContext(dbDispatcher) {
+            safeCall<NutritionLogResponse> {
+                httpClient.get("nutrition-logs")
+            }.onSuccess { response ->
+                nutritionLogDao.insertAll(
+                    response.logs.map { it.toEntity() }
+                )
+            }.map { Unit }
+        }
+
 
     override suspend fun getLogById(id: String): Result<NutritionLogDto, DataError> =
         withContext(dbDispatcher) {

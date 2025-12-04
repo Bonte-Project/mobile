@@ -19,6 +19,7 @@ interface NutritionRepository {
     fun observeLocalGoal(): Flow<NutritionGoalEntity?>
 
     fun getLogs(): Flow<List<NutritionLogDto>>
+    suspend fun refreshNutritionLogs(): Result<Unit, DataError>
     suspend fun getLogById(id: String): Result<NutritionLogDto, DataError>
     suspend fun createLog(request: NutritionLogRequest): Result<NutritionLogDto, DataError>
     suspend fun updateLog(id: String, request: NutritionLogRequest): Result<NutritionLogDto, DataError>

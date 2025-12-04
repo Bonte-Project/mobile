@@ -31,7 +31,7 @@ import ua.nure.bonte.db.data.entity.SleepLogEntity
         NutritionGoalEntity::class,
         ActivityLogEntity::class,
     ],
-    version = 5
+    version = 6
 )
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {

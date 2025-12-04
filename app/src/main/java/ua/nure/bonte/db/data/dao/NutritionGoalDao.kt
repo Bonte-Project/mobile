@@ -10,7 +10,7 @@ interface NutritionGoalDao {
     suspend fun insert(goal: NutritionGoalEntity)
 
     @Query("SELECT * FROM NutritionGoalEntity WHERE userId = :userId LIMIT 1")
-    fun getGoalByUserId(userId: String): Flow<NutritionGoalEntity?> // Змінив назву
+    fun getGoalByUserId(userId: String): Flow<NutritionGoalEntity?>
     @Query("SELECT * FROM NutritionGoalEntity LIMIT 1")
     fun getGoal(): Flow<NutritionGoalEntity?>
 

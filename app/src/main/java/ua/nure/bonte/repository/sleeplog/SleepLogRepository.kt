@@ -9,6 +9,8 @@ import ua.nure.bonte.repository.dto.SleepLogDto
 
 interface SleepLogRepository {
     fun getSleepLogs(): Flow<List<SleepLogDto>>
+    suspend fun refreshSleepLogs(): Result<Unit, DataError>
+
     suspend fun getSleepLogById(id: String): Result<SleepLogDto, DataError>
     suspend fun createSleepLog(request: CreateSleepLogDto): Result<SleepLogDto, DataError>
     suspend fun updateSleepLog(id: String, request: UpdateSleepLogDto): Result<SleepLogDto, DataError>
