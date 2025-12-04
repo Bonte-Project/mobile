@@ -3,7 +3,8 @@ package ua.nure.bonte.repository.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ActivityLogResponse(
+data class NutritionGoalResponse(
     val message: String,
-    val logs: List<ActivityLogDto>
+    val goal: NutritionGoalDto
 )
+

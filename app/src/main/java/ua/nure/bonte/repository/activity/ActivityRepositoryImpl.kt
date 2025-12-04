@@ -32,6 +32,7 @@ import ua.nure.bonte.repository.*
 import ua.nure.bonte.repository.dto.*
 import ua.nure.bonte.repository.dto.mapper.*
 import ua.nure.bonte.db.data.entity.ActivityLogEntity
+import kotlin.collections.map
 
 class ActivityRepositoryImpl(
     private val httpClient: HttpClient,
@@ -44,6 +45,17 @@ class ActivityRepositoryImpl(
         activityLogDao.getAllLogs()
             .map { list -> list.map { it.toDto() } }
             .flowOn(dbDispatcher)
+
+    override suspend fun refreshActivityLogs(): Result<Unit, DataError> =
+        withContext(dbDispatcher) {
+            safeCall<ActivityLogResponse> {
+                httpClient.get("activity-logs")
+            }.onSuccess { response ->
+                activityLogDao.insertAll(
+                    response.logs.map { it.toEntity() }
+                )
+            }.map { Unit }
+        }
 
     override suspend fun getActivityLogById(id: String): Result<ActivityLogDto, DataError> =
         withContext(dbDispatcher) {

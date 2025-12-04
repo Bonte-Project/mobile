@@ -71,3 +71,15 @@ fun NutritionGoalDto.toRequest(): NutritionGoalRequest = NutritionGoalRequest(
     carbs = carbs,
     fat = fat
 )
+
+fun NutritionGoalEntity.toDto(): NutritionGoalDto = NutritionGoalDto(
+    id = id,
+    userId = userId,
+    calories = calories,
+    protein = protein,
+    carbs = carbs,
+    fat = fat,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+

@@ -10,6 +10,8 @@ import ua.nure.bonte.repository.dto.ActivityLogRequest
 interface ActivityRepository {
 
     fun getActivityLogs(): Flow<List<ActivityLogDto>>
+    suspend fun refreshActivityLogs(): Result<Unit, DataError>
+
     suspend fun getActivityLogById(id: String): Result<ActivityLogDto, DataError>
 
     suspend fun createActivityLog(request: ActivityLogRequest): Result<ActivityLogDto, DataError>

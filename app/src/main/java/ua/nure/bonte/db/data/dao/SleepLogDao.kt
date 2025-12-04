@@ -20,6 +20,9 @@ interface SleepLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSleepLog(log: SleepLogEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(list: List<SleepLogEntity>)
+
 
     @Update
     suspend fun updateSleepLog(log: SleepLogEntity)
