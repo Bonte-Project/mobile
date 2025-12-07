@@ -50,35 +50,43 @@ class AIRepositoryImpl @Inject constructor(
         resp
     }
 
-    override suspend fun sendMessage(conversationId: String, message: String): SendMessageResponseDto = withContext(dbDispatcher) {
-        val local = getOrCreateLocalConversation(conversationId)
+    override suspend fun sendMessage(conversationId: String, message: String): SendMessageResponseDto =
+        withContext(dbDispatcher) {
+            val local = getOrCreateLocalConversation(conversationId)
 
-        if (!local.initialized) {
-            try {
-                val created = httpClient.post("ai/create-chat").body<CreateChatResponseDto>()
-                created.conversation?.let {
-                    appDb.aiConversationDao.insert(AiMapper.dtoToConversationEntity(it))
-                }
-            } catch (e: ApiErrorException) {
-                if (e.httpStatus == 409 && e.apiError.message.contains("active conversation")) {
-                    val existing = httpClient.get("ai/chat/history?conversationId=$conversationId").body<GetHistoryResponseDto>()
-                    val entities = existing.messages.map { AiMapper.dtoToMessageEntity(it, conversationId) }
-                    appDb.aiMessageDao.insertMessages(entities)
-                    appDb.aiConversationDao.insert(local.copy(initialized = true))
-                } else {
-                    throw e
+            if (!local.initialized) {
+                try {
+                    val created = httpClient.post("ai/create-chat").body<CreateChatResponseDto>()
+                    created.conversation?.let {
+                        appDb.aiConversationDao.insert(AiMapper.dtoToConversationEntity(it))
+                    }
+                } catch (e: ApiErrorException) {
+                    if (e.httpStatus == 409 && e.apiError.message.contains("active conversation")) {
+                        val existing = httpClient.get("ai/chat/history?conversationId=$conversationId")
+                            .body<GetHistoryResponseDto>()
+                        val entities = existing.messages.map {
+                            AiMapper.dtoToMessageEntity(it, conversationId)
+                        }
+                        appDb.aiMessageDao.insertMessages(entities)
+                        appDb.aiConversationDao.insert(local.copy(initialized = true))
+                    } else throw e
                 }
             }
+
+            val body = mapOf("conversationId" to conversationId, "message" to message)
+            val resp = httpClient.post("ai/send-message") { setBody(body) }
+                .body<SendMessageResponseDto>()
+
+            resp.userMessage?.let {
+                appDb.aiMessageDao.insertMessage(AiMapper.dtoToMessageEntity(it, conversationId))
+            }
+            resp.aiResponse?.let {
+                appDb.aiMessageDao.insertMessage(AiMapper.dtoToMessageEntity(it, conversationId))
+            }
+            getChatHistory(conversationId)
+
+            resp
         }
-
-        val body = mapOf("conversationId" to conversationId, "message" to message)
-        val resp = httpClient.post("/api/ai/send-message") { setBody(body) }.body<SendMessageResponseDto>()
-
-        resp.userMessage?.let { appDb.aiMessageDao.insertMessage(AiMapper.dtoToMessageEntity(it, conversationId)) }
-        resp.aiResponse?.let { appDb.aiMessageDao.insertMessage(AiMapper.dtoToMessageEntity(it, conversationId)) }
-
-        resp
-    }
 
     override suspend fun getOrCreateLocalConversation(conversationId: String): AiConversationEntity = withContext(dbDispatcher) {
         val existing = appDb.aiConversationDao.getConversation(conversationId)

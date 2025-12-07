@@ -3,6 +3,9 @@ package ua.nure.bonte.ui.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +31,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import android.content.res.Configuration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,7 +125,9 @@ fun SleepLogDialog(
                 colors = SliderDefaults.colors(
                     thumbColor = AppTheme.color.active,
                     activeTrackColor = AppTheme.color.active,
-                    inactiveTrackColor = AppTheme.color.active.copy(alpha = 0.3f)
+                    inactiveTrackColor = AppTheme.color.active.copy(alpha = 0.3f),
+                    activeTickColor = AppTheme.color.accent,
+                    inactiveTickColor = AppTheme.color.active
                 )
             )
 
@@ -159,13 +165,19 @@ fun SleepLogDialog(
     }
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun SleepLogDialogPreview() {
     AppTheme {
-        SleepLogDialog(
-            onDismiss = {},
-            onSave = { _, _, _ -> }
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.color.background)
+        ) {
+            SleepLogDialog(
+                onDismiss = {},
+                onSave = { _, _, _ -> }
+            )
+        }
     }
 }

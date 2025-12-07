@@ -15,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.height
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.nure.bonte.R
@@ -76,7 +78,10 @@ private fun AddMenuScreenContent(
             )
 
             BonteButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                icon = R.drawable.ic_food,
                 text = stringResource(R.string.add_food),
                 onClick = {
                     onAction(AddMenu.Action.OnNavigate(Screen.Profile.Nutrition))
@@ -84,7 +89,10 @@ private fun AddMenuScreenContent(
             )
 
             BonteButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                icon = R.drawable.ic_sleep,
                 text = stringResource(R.string.update_sleep_log),
                 onClick = {
                     onAction(AddMenu.Action.OnUpdateSleepLogClick)
@@ -92,7 +100,10 @@ private fun AddMenuScreenContent(
             )
 
             BonteButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                icon = R.drawable.ic_activity,
                 text = stringResource(R.string.update_activity_log),
                 onClick = {
                     onAction(AddMenu.Action.OnUpdateActivityLogClick)
