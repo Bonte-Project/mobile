@@ -127,9 +127,11 @@ fun ActivityLogDialog(
                             valueRange = 1f..10f,
                             steps = 10,
                             colors = SliderDefaults.colors(
+                                thumbColor = AppTheme.color.active,
                                 activeTrackColor = AppTheme.color.active,
-                                inactiveTrackColor = AppTheme.color.accent,
-                                thumbColor = AppTheme.color.active
+                                inactiveTrackColor = AppTheme.color.active.copy(alpha = 0.3f),
+                                activeTickColor = AppTheme.color.accent,
+                                inactiveTickColor = AppTheme.color.active
                             )
                         )
                     }

@@ -41,7 +41,7 @@ fun BonteButton(
                 modifier = Modifier
                     .padding(end = AppTheme.dimension.normal)
                     .size(24.dp),
-                painter = painterResource(R.drawable.google),
+                painter = painterResource(icon),
                 contentDescription = null
             )
         }

@@ -29,5 +29,6 @@ sealed class Screen {
 
     @Serializable sealed class Chat: Screen() {
         @Serializable data object ChatList : Chat()
+        @Serializable data class AIChatDetail(val chatId: String) : Chat()
     }
 }

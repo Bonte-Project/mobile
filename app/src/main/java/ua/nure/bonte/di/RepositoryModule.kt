@@ -28,6 +28,8 @@ import ua.nure.bonte.repository.nutrition.NutritionRepositoryImpl
 import ua.nure.bonte.db.data.AppDb
 import ua.nure.bonte.repository.activity.ActivityRepository
 import ua.nure.bonte.repository.activity.ActivityRepositoryImpl
+import ua.nure.bonte.repository.ai.AIRepository
+import ua.nure.bonte.repository.ai.AIRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -125,4 +127,15 @@ object RepositoryModule {
         dbDispatcher = dbDeliveryDispatcher
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideAiRepository(
+        httpClient: HttpClient,
+        @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
+        dbRepository: DbRepository
+    ): AIRepository = AIRepositoryImpl(
+        httpClient = httpClient,
+        appDb = dbRepository.db,
+        dbDispatcher = dbDeliveryDispatcher
+    )
 }
