@@ -8,6 +8,8 @@ import ua.nure.bonte.db.data.entity.NutritionLogEntity
 interface NutritionLogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(log: NutritionLogEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(list: List<NutritionLogEntity>)
 
     @Query("SELECT * FROM NutritionLogEntity WHERE eatenAt >= :startDate AND eatenAt < :endDate")
     fun getLogsForPeriod(startDate: String, endDate: String): Flow<List<NutritionLogEntity>>

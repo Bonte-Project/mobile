@@ -59,7 +59,6 @@ fun BonteMetricCardPreview() {
         BonteMetricCard(
             title = "Calories",
             value = "2,150",
-            // Використовуємо Active як приклад насиченого фону
             backgroundColor = AppTheme.color.active,
             onClick = {}
         )

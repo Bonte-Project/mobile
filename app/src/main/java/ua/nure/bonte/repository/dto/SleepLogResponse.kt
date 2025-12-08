@@ -13,6 +13,7 @@ data class SleepLogResponse(
 
 @Serializable
 data class SleepLogsResponse(
+    val message: String,
     val logs: List<SleepLogResponse>
 )
 

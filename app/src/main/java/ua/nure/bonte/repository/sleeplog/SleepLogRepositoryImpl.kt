@@ -18,9 +18,13 @@ import ua.nure.bonte.repository.safeCall
 import ua.nure.bonte.repository.dto.CreateSleepLogDto
 import ua.nure.bonte.repository.dto.UpdateSleepLogDto
 import ua.nure.bonte.repository.dto.SleepLogDto
+import ua.nure.bonte.repository.dto.SleepLogResponse
+import ua.nure.bonte.repository.dto.SleepLogsResponse
 import ua.nure.bonte.repository.dto.mapper.toDto
 import ua.nure.bonte.repository.dto.mapper.toEntity
+import ua.nure.bonte.repository.map
 import javax.inject.Inject
+import kotlin.collections.map
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SleepLogRepositoryImpl @Inject constructor(
@@ -35,6 +39,18 @@ class SleepLogRepositoryImpl @Inject constructor(
         sleepLogDao.getAllSleepLogs()
             .map { list -> list.map { it.toDto() } }
             .flowOn(dbDispatcher)
+
+    override suspend fun refreshSleepLogs(): Result<Unit, DataError> =
+        withContext(dbDispatcher) {
+            safeCall<SleepLogsResponse> {
+                httpClient.get("sleep-logs")
+            }.onSuccess { response ->
+                sleepLogDao.insertAll(
+                    response.logs.map { it.toEntity() }
+                )
+            }.map { Unit }
+        }
+
 
     override suspend fun getSleepLogById(id: String): Result<SleepLogDto, DataError> =
         withContext(dbDispatcher) {
@@ -74,3 +90,4 @@ class SleepLogRepositoryImpl @Inject constructor(
             }
         }
 }
+

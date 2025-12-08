@@ -7,46 +7,45 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.nure.bonte.R
 import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.navigation.Screen
-import ua.nure.bonte.ui.compose.BonteDashboardMainInfo
-import ua.nure.bonte.ui.compose.BonteHeader
-import ua.nure.bonte.ui.compose.BonteHeaderType
-import ua.nure.bonte.ui.compose.BonteScreen
+import ua.nure.bonte.repository.dto.NutritionGoalRequest
+import ua.nure.bonte.ui.compose.*
+
 import ua.nure.bonte.ui.theme.AppTheme
+import java.time.LocalDate
 
 @Composable
-fun DashboardScreen(
-    viewModel: DashboardViewModel,
-    navController: NavController
-) {
+fun DashboardScreen(viewModel: DashboardViewModel, navController: NavController) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LaunchedEffect(key1 = Unit) {
+
+    LaunchedEffect(navController.currentBackStackEntry) {
+        viewModel.onAction(Dashboard.Action.Refresh)
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.event.collect {
             when (it) {
+                is Dashboard.Event.OnNavigate -> navController.navigate(it.route)
                 Dashboard.Event.OnBack -> navController.navigateUp()
-                is Dashboard.Event.OnNavigate -> navController.navigate(route = it.route)
             }
         }
     }
 
-    DashboardScreenContent(
-        state = state,
-        onAction = viewModel::onAction
-    )
+    DashboardScreenContent(state, viewModel::onAction)
 }
 
 @Composable
@@ -54,14 +53,84 @@ private fun DashboardScreenContent(
     state: Dashboard.State,
     onAction: (Dashboard.Action) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+
+    fun isToday(date: String): Boolean {
+        return try {
+            LocalDate.parse(date.substring(0, 10)) == LocalDate.now()
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    val todayNutritionLogs = state.nutritionLogs.filter { it.createdAt != null && isToday(it.createdAt) }
+    val todayActivityLogs = state.activityLogs.filter { it.completedAt != null && isToday(it.completedAt) }
+    val todaySleepLogs = state.sleepLogs.filter { it.startTime != null && isToday(it.startTime) }
+
+    val totalCalories = todayNutritionLogs.sumOf { it.calories }
+    val totalProtein = todayNutritionLogs.sumOf { it.protein }
+    val totalCarbs = todayNutritionLogs.sumOf { it.carbs }
+    val totalFat = todayNutritionLogs.sumOf { it.fat }
+
+    val totalActivityMinutes = todayActivityLogs.sumOf { it.durationMinutes }
+
+    val totalSleepMinutes = todaySleepLogs.sumOf { log ->
+        try {
+            val start = java.time.OffsetDateTime.parse(log.startTime)
+            val end = java.time.OffsetDateTime.parse(log.endTime)
+            java.time.Duration.between(start, end).toMinutes().toInt()
+        } catch (_: Exception) {
+            0
+        }
+    }
+
+    val sleepHours = totalSleepMinutes / 60
+    val sleepMinutes = totalSleepMinutes % 60
+
+    val lastMeal = todayNutritionLogs.lastOrNull() ?: state.nutritionLogs.lastOrNull()
+    val lastActivity = todayActivityLogs.lastOrNull() ?: state.activityLogs.lastOrNull()
+
+    val recentItems = buildList {
+        lastMeal?.let {
+            add(
+                RecentItem(
+                    type = "nutrition",
+                    title = it.name,
+                    value = "${it.calories} kcal",
+                    time = it.createdAt,
+                    icon = R.drawable.nutrition_icon
+                )
+            )
+        }
+
+        lastActivity?.let {
+            val intensity = it.intensity.toIntOrNull() ?: 0
+            val icon = when (intensity) {
+                in 1..3 -> R.drawable.yoga_icon
+                in 4..7 -> R.drawable.run_icon
+                in 8..10 -> R.drawable.gym_icon
+                else -> R.drawable.activity_default
+            }
+
+            add(
+                RecentItem(
+                    type = "activity",
+                    title = it.activityType,
+                    value = "${it.durationMinutes} min",
+                    time = it.completedAt,
+                    icon = icon
+                )
+            )
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+
         BonteScreen {
+
             BonteHeader(
                 text = stringResource(R.string.dashboard),
                 type = BonteHeaderType.Settings,
-                onSettingsClick = {
-                    onAction(Dashboard.Action.OnNavigate(Screen.Profile.Settings))
-                }
+                onSettingsClick = { onAction(Dashboard.Action.OnNavigate(Screen.Profile.Settings)) }
             )
 
             BonteDashboardMainInfo(
@@ -75,10 +144,66 @@ private fun DashboardScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = AppTheme.dimension.normal),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(AppTheme.dimension.small)
+                verticalArrangement = Arrangement.spacedBy(AppTheme.dimension.normal)
             ) {
 
+                item {
+                    BonteMetricCard(
+                        title = "Calories",
+                        value = totalCalories.toString(),
+                        backgroundColor = AppTheme.color.accent,
+                        onClick = { onAction(Dashboard.Action.OnNavigate(Screen.Profile.Nutrition)) }
+                    )
+                }
+
+                item {
+                    BonteMetricCard(
+                        title = "Sleep",
+                        value = "${sleepHours}h ${sleepMinutes}m",
+                        backgroundColor = AppTheme.color.accent,
+                    ) {}
+                }
+
+                item {
+                    BonteMetricCard(
+                        title = "Activity",
+                        value = "${totalActivityMinutes} min",
+                        backgroundColor = AppTheme.color.accent,
+                    ) {}
+                }
+
+                state.goal?.let { goal ->
+                    item {
+                        BonteGoalCard(
+                            title = "Goal Progress",
+                            recommendationText =
+                                """
+                                Calories: $totalCalories/${goal.calories}
+                                Protein: ${totalProtein}/${goal.protein}g
+                                Carbs: ${totalCarbs}/${goal.carbs}g
+                                Fat: ${totalFat}/${goal.fat}g
+                                """.trimIndent()
+                        )
+                    }
+                }
+
+                if (recentItems.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Recent",
+                            style = AppTheme.typography.regular.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(top = AppTheme.dimension.normal)
+                        )
+                    }
+
+                    items(recentItems) { item ->
+                        BonteActivityCard(
+                            iconRes = item.icon,
+                            title = item.title,
+                            value = item.value,
+                        ) {}
+                    }
+                }
             }
         }
 
@@ -99,36 +224,24 @@ private fun DashboardScreenContent(
     }
 }
 
+data class RecentItem(
+    val type: String,
+    val title: String,
+    val value: String,
+    val time: String,
+    val icon: Int
+)
+
 @Preview(showSystemUi = true)
 @Composable
-private fun DashboardScreenContentPreview(modifier: Modifier = Modifier) {
+private fun DashboardPreview() {
     AppTheme {
-        Box(
-            modifier = Modifier.background(color = AppTheme.color.background)
-        ) {
-            DashboardScreenContent(
-                state = Dashboard.State(
-                    profile = ProfileEntity.profilePreview
-                ),
-                onAction = { }
-            )
-        }
-    }
-}
-
-@Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun DashboardScreenContentDarkPreview(modifier: Modifier = Modifier) {
-    AppTheme {
-        Box(
-            modifier = Modifier.background(color = AppTheme.color.background)
-        ) {
-            DashboardScreenContent(
-                state = Dashboard.State(
-                    profile = ProfileEntity.profilePreview
-                ),
-                onAction = { }
-            )
-        }
+        DashboardScreenContent(
+            state = Dashboard.State(
+                profile = ProfileEntity.profilePreview,
+                goal = NutritionGoalRequest(2000, 100, 250, 60)
+            ),
+            onAction = {}
+        )
     }
 }

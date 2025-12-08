@@ -15,6 +15,7 @@ import ua.nure.bonte.repository.nutrition.NutritionRepository
 import ua.nure.bonte.repository.Result
 import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.dto.CreateSleepLogDto
+import ua.nure.bonte.repository.dto.NutritionGoalRequest
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.ui.nutrition.Nutrition.Event.OnBack
@@ -53,8 +54,14 @@ class NutritionViewModel @Inject constructor(
             Nutrition.Action.OnUpdateNutritionLogClick -> {
                 _state.update { it.copy(showNutritionDialog = true) }
             }
+            Nutrition.Action.OnUpdateGoalClick -> {
+                _state.update { it.copy(showAddGoalDialog = true) }
+            }
             Nutrition.Action.OnDismissNutritionDialog -> {
                 _state.update { it.copy(showNutritionDialog = false) }
+            }
+            Nutrition.Action.OnDismissAddGoalDialog -> {
+                _state.update { it.copy(showAddGoalDialog = false) }
             }
             is Nutrition.Action.OnSaveNutritionLog -> {
                 _state.update { it.copy(inProgress = true) }
@@ -78,6 +85,26 @@ class NutritionViewModel @Inject constructor(
                         _event.emit(OnBack)
                     }.onError { error ->
                         Log.e(TAG, "Failed to save nutrition log: $error")
+                        _state.update { it.copy(inProgress = false) }
+                    }
+            }
+            is Nutrition.Action.OnSaveGoal -> {
+                _state.update { it.copy(inProgress = true) }
+
+                val nutritionGoalRequest = NutritionGoalRequest(
+                    calories = action.calories,
+                    protein = action.protein,
+                    carbs = action.carbs,
+                    fat = action.fat,
+                    )
+
+                nutritionRepository.createOrUpdateGoals(nutritionGoalRequest)
+                    .onSuccess {
+                        Log.d(TAG, "Nutrition goal saved successfully: $it")
+                        _state.update { it.copy(showNutritionDialog = false, inProgress = false) }
+                        _event.emit(OnBack)
+                    }.onError { error ->
+                        Log.e(TAG, "Failed to save nutrition goal: $error")
                         _state.update { it.copy(inProgress = false) }
                     }
             }
