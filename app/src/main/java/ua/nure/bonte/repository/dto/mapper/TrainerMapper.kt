@@ -5,6 +5,7 @@ import ua.nure.bonte.db.data.entity.TrainerEntity
 import ua.nure.bonte.repository.dto.ExperienceDto
 import ua.nure.bonte.repository.dto.TrainerDto
 import ua.nure.bonte.repository.dto.TrainerResponse
+import ua.nure.bonte.ui.trainer.view.Trainer
 
 fun TrainerEntity.toTrainerResponse(experiences: List<ExperienceEntity> = emptyList()): TrainerResponse {
     val expDto = experiences.map { it.toDto() }
@@ -54,3 +55,6 @@ fun ExperienceDto.toEntity() = ExperienceEntity(
     startDate = startDate,
     endDate = endDate
 )
+
+
+

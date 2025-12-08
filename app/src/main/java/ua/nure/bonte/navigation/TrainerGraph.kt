@@ -5,7 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import ua.nure.bonte.ui.trainer.edit.TrainerScreen
+import ua.nure.bonte.ui.trainer.edit.EditTrainerScreen
+import ua.nure.bonte.ui.trainer.view.TrainerScreen
 import ua.nure.bonte.ui.trainer.list.TrainerListScreen
 
 fun NavGraphBuilder.trainerGraph(navController: NavController) {
@@ -29,5 +30,12 @@ fun NavGraphBuilder.trainerGraph(navController: NavController) {
                 }
             )
         }
+        composable<Screen.Trainer.EditTrainer> {
+            EditTrainerScreen(
+                viewModel = hiltViewModel(),
+                navController = navController
+            )
+        }
+
     }
 }

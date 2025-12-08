@@ -20,7 +20,6 @@ import ua.nure.bonte.repository.token.TokenRepositoryImpl
 import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.repository.user.UserRepositoryImpl
 import ua.nure.bonte.repository.trainer.TrainerRepository
-import ua.nure.bonte.repository.trainer.TrainerRepositoryImpl
 import ua.nure.bonte.repository.sleeplog.SleepLogRepository
 import ua.nure.bonte.repository.sleeplog.SleepLogRepositoryImpl
 import ua.nure.bonte.repository.nutrition.NutritionRepository
@@ -30,6 +29,7 @@ import ua.nure.bonte.repository.activity.ActivityRepository
 import ua.nure.bonte.repository.activity.ActivityRepositoryImpl
 import ua.nure.bonte.repository.ai.AIRepository
 import ua.nure.bonte.repository.ai.AIRepositoryImpl
+import ua.nure.bonte.repository.trainer.TrainerRepositoryImpl
 import javax.inject.Singleton
 
 @Module

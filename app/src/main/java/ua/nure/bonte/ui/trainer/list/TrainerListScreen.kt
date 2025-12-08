@@ -66,7 +66,7 @@ private fun TrainerListContent(
                 TrainerItem(
                     avatarUrl = it.profile?.avatarUrl,
                     fullName = it.profile?.fullName,
-                    specialization = it.trainerEntity.specialization,
+                    specialization = it.trainerEntity.specialization ?: "",
                     onClick = {
                         onAction(TrainerList.Action.OnNavigate(route = Screen.Trainer.TrainerProfile))
                     },
