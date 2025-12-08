@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import ua.nure.bonte.ui.compose.BonteInputField
 import androidx.compose.material3.SelectableDates
 
+// Вспомогательные функции для преобразования дат
 fun convertMillisToISO(millis: Long): String {
     val fixedInstant = Instant.ofEpochMilli(millis)
         .atOffset(ZoneOffset.UTC)
@@ -43,6 +44,7 @@ fun convertISOToMillis(isoString: String): Long? {
     }
 }
 
+// Поле ввода с выбором даты (DatePickerInputField)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerInputField(
@@ -125,6 +127,8 @@ fun DatePickerInputField(
         }
     }
 }
+
+// Диалоговое окно добавления опыта (BonteAddExperienceDialog)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BonteAddExperienceDialog(
@@ -137,9 +141,13 @@ fun BonteAddExperienceDialog(
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
     val isFormValid = title.isNotBlank() && startDate.isNotBlank() && endDate.isNotBlank()
+
+    // Минимальная дата для "Дата окончания" - это выбранная "Дата начала"
     val minDateMillis = remember(startDate) {
         startDate.takeIf { it.isNotBlank() }?.let { convertISOToMillis(it) }
     }
+
+    // Максимальная дата для "Дата окончания" - это сегодняшний день
     val todayMillis = remember {
         LocalDate.now()
             .atStartOfDay(ZoneId.systemDefault())
@@ -213,11 +221,11 @@ fun BonteAddExperienceDialog(
                     endDate = endDate
                 )
                 onAdd(request)
+                onDismiss()
             }
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 private fun BonteAddExperienceDialogPreview() {

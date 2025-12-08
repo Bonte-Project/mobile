@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.trainer.TrainerRepository
 import ua.nure.bonte.repository.user.UserRepository
-import ua.nure.bonte.ui.trainer.edit.Trainer
 import ua.nure.bonte.ui.trainer.list.TrainerList.Event.*
 import javax.inject.Inject
 

@@ -10,9 +10,9 @@ import androidx.room.Relation
 data class TrainerEntity(
     @PrimaryKey val trainerId: String,
     val userId: String,
-    val bio: String,
-    val certification: String,
-    val specialization: String,
+    val bio: String?,
+    val certification: String?,
+    val specialization: String?,
     val location: String?,
     val isActive: Boolean,
 )

@@ -108,4 +108,9 @@
     <string name="chats">Chats</string>
     <string name="type_message">Type a message...</string>
     <string name="send">Send</string>
+    <string name="editTrainer">Edit trainer profile</string>
+    <string name="untitled">Untitled</string>
+    <string name="title">Title</string>
+    <string name="delete">Delete</string>
+    <string name="noExperience">No experience yet</string>
 </resources>
