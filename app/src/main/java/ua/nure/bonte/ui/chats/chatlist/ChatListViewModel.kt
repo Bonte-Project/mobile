@@ -51,11 +51,16 @@ class ChatListViewModel @Inject constructor(
         val aiConversation = aiRepository.getOrCreateLocalConversation("ai_assistant")
 
         aiConversation?.let { conv ->
+            val lastMsgEntity = aiRepository.observeChatHistory(conv.id)
+                .stateIn(viewModelScope)
+                .value
+                .lastOrNull()?.message ?: ""
+
             chats += ChatList.ChatItem(
                 id = conv.id,
                 name = "AI Assistant",
                 type = ChatList.ChatType.AI_ASSISTANT,
-                lastMessage = "",
+                lastMessage = lastMsgEntity,
                 avatarUrl = null,
                 unreadCount = 0
             )
@@ -63,5 +68,6 @@ class ChatListViewModel @Inject constructor(
 
         _state.update { it.copy(chats = chats) }
     }
+
 
 }

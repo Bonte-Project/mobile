@@ -11,7 +11,7 @@ data class AiMessageEntity(
     val message: String,
     val sentAt: String,
     @ColumnInfo(name = "to_from") val toFrom: Boolean, // true = user, false = ai
-    val sender: String,
+    val sender: String? = null,
     val index: Int,
     @ColumnInfo(name = "is_system") val isSystem: Boolean = false
 )

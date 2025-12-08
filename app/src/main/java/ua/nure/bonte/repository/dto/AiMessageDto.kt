@@ -8,7 +8,7 @@ data class AiMessageDto(
     val message: String,
     val sentAt: String,
     val toFrom: Boolean,
-    val sender: String,
+    val sender: String? = null,
     val index: Int,
     val isSystem: Boolean = false
 )
