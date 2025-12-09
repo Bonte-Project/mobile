@@ -7,6 +7,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Serializable
 data class SessionsDto(
@@ -25,7 +27,7 @@ data class SessionDto(
     val name: String,
     val userId: String,
     val trainerId: String,
-    val scheduledAt: String,
+    @Serializable(with = LocalDateTimeSerializer::class) val scheduledAt: LocalDateTime,
     val status: SessionStatus,
 )
 
@@ -58,6 +60,16 @@ object SessionStatusSerializer : KSerializer<SessionStatus> {
             "cancelled" -> SessionStatus.cancelled
             else -> throw IllegalArgumentException("Invalid value")
         }
+}
 
+object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+    override val descriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
+    override fun serialize(encoder: Encoder, value: LocalDateTime) {
+        encoder.encodeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+    }
+
+    override fun deserialize(decoder: Decoder): LocalDateTime {
+        return LocalDateTime.parse(decoder.decodeString())
+    }
 }
