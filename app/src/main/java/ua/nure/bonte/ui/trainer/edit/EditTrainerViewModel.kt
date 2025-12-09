@@ -108,7 +108,7 @@ class EditTrainerViewModel @Inject constructor(
                     endDate = action.endDate
                 )
                 viewModelScope.launch {
-                    trainerRepository.addExperience(expRequest)
+                    trainerRepository.addExperience(state.value.trainer?.trainerId ?: "", expRequest)
                         .onSuccess { response ->
                             val newExp = response.trainer.experience.last().let { exp ->
                                 ExperienceEntity(
@@ -146,7 +146,7 @@ class EditTrainerViewModel @Inject constructor(
             is EditTrainer.Action.OnExperienceDelete -> {
                 _state.update { it.copy(inProgress = true) }
                 viewModelScope.launch {
-                    trainerRepository.deleteExperience(action.experienceId)
+                    trainerRepository.deleteExperience(trainerId = state.value.trainer?.trainerId ?: "", action.experienceId)
                         .onSuccess {
                             _state.update { s ->
                                 s.copy(
@@ -184,6 +184,7 @@ class EditTrainerViewModel @Inject constructor(
         viewModelScope.launch {
             val exp = _state.value.experiences.first { it.experienceId == experienceId }
             trainerRepository.updateExperience(
+                trainerId = state.value.trainer?.trainerId ?: "",
                 experienceId = experienceId,
                 request = ExperienceRequest(
                     title = exp.title ?: "",

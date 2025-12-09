@@ -15,9 +15,11 @@ interface TrainerRepository {
     suspend fun loadMyTrainer(): Result<TrainerResponse, DataError>
     suspend fun loadTrainers(): Result<TrainerListResponse, DataError>
     suspend fun getTrainerById(id: String): Result<TrainerResponse, DataError>
-    suspend fun addExperience(request: ExperienceRequest): Result<TrainerResponse, DataError>
-    suspend fun updateExperience(experienceId: String, request: ExperienceRequest): Result<TrainerResponse, DataError>
-    suspend fun deleteExperience(experienceId: String): Result<TrainerResponse, DataError>
+    suspend fun addExperience(trainerId: String, request: ExperienceRequest): Result<TrainerResponse, DataError>
+    suspend fun updateExperience(trainerId: String,experienceId: String, request: ExperienceRequest): Result<TrainerResponse, DataError>
+    suspend fun deleteExperience(trainerId: String, experienceId: String): Result<TrainerResponse, DataError>
     fun getTrainers(): Flow<List<Trainer>>
+    fun getTrainerFlowById(id: String): Flow<Trainer>
+
 }
 

@@ -19,7 +19,7 @@ sealed class Screen {
     }
 
     @Serializable sealed class Trainer: Screen() {
-        @Serializable data object TrainerProfile : Trainer()
+        @Serializable data class TrainerProfile(val trainerId: String) : Trainer()
         @Serializable data object TrainerList : Trainer()
         @Serializable data object EditTrainer : Trainer()
     }

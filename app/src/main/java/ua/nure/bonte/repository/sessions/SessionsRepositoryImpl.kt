@@ -62,6 +62,17 @@ class SessionsRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun getTrainerSessionsByTrainerId(id: String): Result<SessionsDto, DataError> =
+        withContext(Dispatchers.IO) {
+            safeCall<SessionsDto> {
+                httpClient.get("training-sessions/trainer/$id")
+            }.onSuccess { sessionsDto ->
+                dbRepository.db.sessionDao.insert(
+                    sessionsDto.sessions.map { it.toEntity() }
+                )
+            }
+        }
+
     override suspend fun createSession(
         name: String,
         userId: String,

@@ -8,6 +8,7 @@ import ua.nure.bonte.repository.dto.ActivityLogDto
 import ua.nure.bonte.repository.dto.NutritionGoalRequest
 import ua.nure.bonte.repository.dto.NutritionLogDto
 import ua.nure.bonte.repository.dto.SleepLogDto
+import java.time.LocalDate
 
 object Dashboard {
 
@@ -21,6 +22,9 @@ object Dashboard {
         data class OnNavigate(val route: Screen) : Action
         data object OnAddButtonClick : Action
         data object Refresh : Action
+        data class OnDayClick(val date: LocalDate) : Action
+        data object OnShowAddSessionDialog : Action
+        data object OnDismissAddSessionDialog : Action
     }
 
     data class State(
@@ -30,6 +34,8 @@ object Dashboard {
         val nutritionLogs: List<NutritionLogDto> = emptyList(),
         val sleepLogs: List<SleepLogDto> = emptyList(),
         val activityLogs: List<ActivityLogDto> = emptyList(),
-        val goal: NutritionGoalRequest? = null
+        val goal: NutritionGoalRequest? = null,
+        val showAddSessionDialog: Boolean = false,
+        val selectedDay: LocalDate? = null,
     )
 }

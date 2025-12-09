@@ -13,8 +13,11 @@ interface TrainerDao {
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(list: List<TrainerEntity>)
 
-    @Query("SELECT * FROM TrainerEntity LIMIT 1")
-    fun getTrainer(): Flow<TrainerEntity>
+    @Query("SELECT * FROM TrainerEntity WHERE userId = :userId")
+    fun getTrainerByUserId(userId: String): Flow<TrainerEntity>
+
+    @Query("SELECT * FROM TrainerEntity WHERE trainerId = :trainerId")
+    fun getTrainerById(trainerId: String): Flow<Trainer>
 
     @Query("SELECT * FROM TrainerEntity")
     fun getTrainerList(): Flow<List<Trainer>>

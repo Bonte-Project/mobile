@@ -72,6 +72,29 @@ class DashboardViewModel @Inject constructor(
             is Dashboard.Action.OnNavigate -> _event.emit(OnNavigate(action.route))
             Dashboard.Action.OnAddButtonClick -> _event.emit(OnNavigate(Screen.Profile.AddMenu))
             Dashboard.Action.Refresh -> refreshAllLogs()
+            is Dashboard.Action.OnDayClick -> {
+                _state.update { s ->
+                    s.copy(
+                        selectedDay = action.date,
+                        showAddSessionDialog = true
+                    )
+                }
+            }
+            Dashboard.Action.OnDismissAddSessionDialog -> {
+                _state.update { s ->
+                    s.copy(
+                        selectedDay = null,
+                        showAddSessionDialog = false
+                    )
+                }
+            }
+            Dashboard.Action.OnShowAddSessionDialog -> {
+                _state.update { s ->
+                    s.copy(
+                        showAddSessionDialog = true
+                    )
+                }
+            }
         }
     }
 

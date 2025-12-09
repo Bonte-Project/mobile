@@ -272,7 +272,8 @@ private fun DashboardScreenContent(
                             dayContent = { calendarDay ->
                                 Day(
                                     day = calendarDay,
-                                    sessions = state.sessions?.get(calendarDay.date.dayOfYear)
+                                    sessions = state.sessions?.get(calendarDay.date.dayOfYear),
+                                    onDayClick = { }
                                 )
                             },
                             monthHeader = { month ->
@@ -324,126 +325,8 @@ data class RecentItem(
     val icon: Int
 )
 
-@Composable
-private fun WeekdaysHeader(daysOfWeek: List<DayOfWeek>) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        daysOfWeek.forEach { daysOfWeek ->
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 0.5.dp)
-                    .background(color = AppTheme.color.grey.copy(alpha = .3F))
-                    .padding(vertical = 4.dp)
-                    .weight(1F),
-                text = daysOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                style = AppTheme.typography.small.copy(
-                    textAlign = TextAlign.Center
-                )
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Day(
-    day: CalendarDay,
-    sessions: List<SessionEntity>? = null
-) {
-    TooltipBox(
-        tooltip = {
-            if (sessions?.isNotEmpty() == true) {
-                Column(
-                    modifier = Modifier
-                        .width(200.dp),
-                ) {
-                    sessions.take(15).forEach {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 2.dp)
-                                .clip(shape = RoundedCornerShape(4.dp))
-                                .background(
-                                    color = when (it.status) {
-                                        SessionStatus.scheduled -> AppTheme.color.active
-                                        SessionStatus.completed -> AppTheme.color.grey
-                                        SessionStatus.cancelled -> Color.Red
-                                    },
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = AppTheme.dimension.small)
-                            ,
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(vertical = AppTheme.dimension.small),
-                                text = it.scheduledAt.format(DateTimeFormatter.ofPattern("HH:mm")),
-                                style = AppTheme.typography.regular
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(start = AppTheme.dimension.normal)
-                                    .weight(1F),
-                                text = it.name,
-                                style = AppTheme.typography.regular
-                            )
-                        }
-                    }
-
-                }
-            }
-        },
-        state = rememberTooltipState(),
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Above,
-            spacingBetweenTooltipAndAnchor = 4.dp
-        )
-    ) {
-        Column(
-            modifier = Modifier.aspectRatio(0.5F)
-        ) {
-            Box(
-                contentAlignment = Alignment.TopStart
-
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    items(items = sessions ?: emptyList(), key = { it.id }) {
-                        Box(
-                            modifier = Modifier
-                                .height(8.dp)
-                                .fillMaxWidth()
-                                .background(
-                                    color = when (it.status) {
-                                        SessionStatus.scheduled -> AppTheme.color.active
-                                        SessionStatus.completed -> AppTheme.color.grey
-                                        SessionStatus.cancelled -> Color.Red
-                                    }
-                                )
-                        )
-                    }
-
-                }
-
-                Text(
-                    text = day.date.dayOfMonth.toString(),
-                    style = AppTheme.typography.small
-                )
-
-            }
-        }
-
-    }
 
 
-}
 
 @Preview(showSystemUi = true)
 @Composable
