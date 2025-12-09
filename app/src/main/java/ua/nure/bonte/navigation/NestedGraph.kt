@@ -8,4 +8,5 @@ sealed class NestedGraph {
     @Serializable data object Trainer : NestedGraph()
     @Serializable data object Chat : NestedGraph()
     @Serializable data object Analytics : NestedGraph()
+    @Serializable data object OwnTrainer: NestedGraph()
 }

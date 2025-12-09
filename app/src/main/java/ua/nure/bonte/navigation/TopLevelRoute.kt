@@ -19,6 +19,12 @@ val topLevelRoutes = listOf<TopLevelRoute<NestedGraph>>(
         unselectedIcon = R.drawable.profile_passive
     ),
     TopLevelRoute(
+        route = NestedGraph.OwnTrainer,
+        title = R.string.ownTrainer,
+        selectedIcon = R.drawable.own_trainer_active,
+        unselectedIcon = R.drawable.own_trainer_passive
+    ),
+    TopLevelRoute(
         route = NestedGraph.Trainer,
         title = R.string.trainer,
         selectedIcon = R.drawable.trainer_active,
@@ -35,5 +41,6 @@ val topLevelRoutes = listOf<TopLevelRoute<NestedGraph>>(
         title = R.string.chat,
         selectedIcon = R.drawable.chat_active,
         unselectedIcon = R.drawable.chat_passive
-    )
+    ),
+
 )

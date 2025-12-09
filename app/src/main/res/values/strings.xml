@@ -113,4 +113,5 @@
     <string name="title">Title</string>
     <string name="delete">Delete</string>
     <string name="noExperience">No experience yet</string>
+    <string name="ownTrainer">Own Trainer</string>
 </resources>

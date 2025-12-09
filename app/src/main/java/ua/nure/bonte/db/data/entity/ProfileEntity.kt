@@ -21,18 +21,23 @@ data class ProfileEntity(
     val isOwned: Boolean = false,
 ) {
     companion object {
-        val profilePreview = ProfileEntity(
-            id = "8bef67ec-cdc6-4434-a4e7-fb03b763317a",
-            email = "john.dow@gmail.com",
-            fullName = "John Dow",
-            avatarUrl = "",
-            role = "user",
-            isEmailVerified = true,
-            height = 178,
-            weight = 61,
-            age = 17,
-            createdAt = "",
-            isPremium = false
+        val profilePreview = Profile(
+            profileEntity = ProfileEntity(
+                id = "8bef67ec-cdc6-4434-a4e7-fb03b763317a",
+                email = "john.dow@gmail.com",
+                fullName = "John Dow",
+                avatarUrl = "",
+                role = "user",
+                isEmailVerified = true,
+                height = 178,
+                weight = 61,
+                age = 17,
+                createdAt = "",
+                isPremium = false
+            ),
+            trainer = null,
+            sessions = null
+
         )
     }
 }
@@ -43,5 +48,10 @@ data class Profile(
         entity = TrainerEntity::class,
         parentColumn = "id",
         entityColumn = "userId",
-    ) val trainer: Trainer?
+    ) val trainer: Trainer?,
+    @Relation(
+        entity = SessionEntity::class,
+        parentColumn = "id",
+        entityColumn = "userId"
+    ) val sessions: List<SessionEntity>? = null
 )

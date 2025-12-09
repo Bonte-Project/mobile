@@ -28,6 +28,11 @@ data class Trainer(
         parentColumn = "userId",
         entityColumn = "id",
         entity = ProfileEntity::class
-    ) val profile: ProfileEntity?
+    ) val profile: ProfileEntity?,
+    @Relation(
+        entity = SessionEntity::class,
+        parentColumn = "trainerId",
+        entityColumn = "trainerId"
+    ) val sessions: List<SessionEntity>? = null
 )
 
