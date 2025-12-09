@@ -37,14 +37,9 @@ class SessionsRepositoryImpl @Inject constructor(
 
     override suspend fun getUserSessions(): Result<SessionsDto, DataError> =
         withContext(Dispatchers.IO) {
-            Log.d(TAG, "getUserSessions: ...")
-
-
-
             safeCall<SessionsDto> {
                 httpClient.get("training-sessions")
             }.onSuccess { sessionsDto ->
-                Log.d(TAG, "getUserSessions: ${sessionsDto.sessions.size}")
                 dbRepository.db.sessionDao.insert(
                     sessionsDto.sessions.map { it.toEntity() }
                 )

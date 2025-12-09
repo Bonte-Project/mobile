@@ -68,11 +68,6 @@ private fun TrainerScreenContent(
 ) {
     BonteScreen {
         state.trainer?.let { trainerData ->
-
-//            val profileEntity = state.profile.profileEntity
-//            val trainerEntity = trainerData.trainerEntity
-//            val experienceList = trainerData.experience ?: emptyList()
-
             val currentMonth = remember { YearMonth.now() }
             val startMonth = remember { currentMonth.minusMonths(100) }
             val endMonth = remember { currentMonth.plusMonths(100) }
