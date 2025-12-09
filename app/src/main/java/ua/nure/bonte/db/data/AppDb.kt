@@ -21,8 +21,10 @@ import ua.nure.bonte.db.data.entity.TrainerToExperienceEntity
 import ua.nure.bonte.db.data.entity.SleepLogEntity
 import ua.nure.bonte.db.data.dao.AiConversationDao
 import ua.nure.bonte.db.data.dao.AiMessageDao
+import ua.nure.bonte.db.data.dao.MessageDao
 import ua.nure.bonte.db.data.entity.AiConversationEntity
 import ua.nure.bonte.db.data.entity.AiMessageEntity
+import ua.nure.bonte.db.data.entity.MessageEntity
 
 @Database(
     entities = [
@@ -36,8 +38,9 @@ import ua.nure.bonte.db.data.entity.AiMessageEntity
         ActivityLogEntity::class,
         AiConversationEntity::class,
         AiMessageEntity::class,
+        MessageEntity::class,
     ],
-    version = 8
+    version = 9
 )
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {
@@ -51,4 +54,5 @@ abstract class AppDb : RoomDatabase() {
     abstract val activityLogDao: ActivityLogDao
     abstract val aiConversationDao: AiConversationDao
     abstract val aiMessageDao: AiMessageDao
+    abstract val messageDao: MessageDao
 }

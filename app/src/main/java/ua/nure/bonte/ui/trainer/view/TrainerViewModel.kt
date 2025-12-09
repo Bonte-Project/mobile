@@ -40,8 +40,6 @@ class TrainerViewModel @Inject constructor(
                 loadTrainer()
             }
     }
-
-
     fun refreshTrainer() {
         loadTrainer()
     }

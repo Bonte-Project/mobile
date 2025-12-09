@@ -8,6 +8,7 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import ua.nure.bonte.ui.chats.aichat.AIChatScreen
 import ua.nure.bonte.ui.chats.chatlist.ChatListScreen
+import ua.nure.bonte.ui.chats.trainerchat.TrainerChatScreen
 
 fun NavGraphBuilder.chatGraph(navController: NavController) {
     navigation<NestedGraph.Chat>(
@@ -25,6 +26,14 @@ fun NavGraphBuilder.chatGraph(navController: NavController) {
             AIChatScreen(
                 viewModel = hiltViewModel(),
                 navController = navController
+            )
+        }
+        composable<Screen.Chat.TrainerChat> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.Chat.TrainerChat>()
+            TrainerChatScreen(
+                viewModel = hiltViewModel(),
+                navController = navController,
+                conversationId = args.chatId
             )
         }
     }

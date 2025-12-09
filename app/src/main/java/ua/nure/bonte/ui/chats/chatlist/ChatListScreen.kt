@@ -4,16 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import ua.nure.bonte.R
 import ua.nure.bonte.ui.compose.BonteHeader
 import ua.nure.bonte.ui.compose.BonteHeaderType
@@ -69,9 +61,7 @@ private fun ChatListScreenContent(
         BonteHeader(
             text = stringResource(R.string.chats),
             type = BonteHeaderType.Back,
-            onBackClick = {
-                onAction(ChatList.Action.OnBack)
-            }
+            onBackClick = { onAction(ChatList.Action.OnBack) }
         )
 
         LazyColumn(
@@ -84,9 +74,7 @@ private fun ChatListScreenContent(
             items(state.chats) { chat ->
                 ChatListItem(
                     chat = chat,
-                    onClick = {
-                        onAction(ChatList.Action.OnChatClick(chat.id, chat.type))
-                    }
+                    onClick = { onAction(ChatList.Action.OnChatClick(chat.id, chat.type)) }
                 )
             }
         }
@@ -102,9 +90,7 @@ private fun ChatListItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = AppTheme.color.background
-        ),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.color.background),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -131,9 +117,11 @@ private fun ChatListItem(
                     }
                     ChatList.ChatType.TRAINER -> {
                         if (chat.avatarUrl != null) {
-                            Text(
-                                text = chat.name.first().toString(),
-                                style = AppTheme.typography.large
+                            AsyncImage(
+                                model = chat.avatarUrl,
+                                contentDescription = "Trainer Avatar",
+                                modifier = Modifier.size(48.dp).clip(CircleShape),
+                                contentScale = ContentScale.Crop
                             )
                         } else {
                             Text(
@@ -147,9 +135,7 @@ private fun ChatListItem(
 
             Spacer(modifier = Modifier.width(AppTheme.dimension.normal))
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = chat.name,
                     style = AppTheme.typography.regular
@@ -187,14 +173,12 @@ private fun ChatListItem(
 @Composable
 private fun ChatListScreenContentPreview(modifier: Modifier = Modifier) {
     AppTheme {
-        Box(
-            modifier = modifier.background(color = AppTheme.color.background)
-        ) {
+        Box(modifier = modifier.background(color = AppTheme.color.background)) {
             ChatListScreenContent(
                 state = ChatList.State(
                     chats = listOf(
                         ChatList.ChatItem(
-                            id = "1",
+                            id = "ai_chat",
                             name = "AI Assistant",
                             type = ChatList.ChatType.AI_ASSISTANT,
                             lastMessage = "How can I help you today?",
@@ -202,7 +186,7 @@ private fun ChatListScreenContentPreview(modifier: Modifier = Modifier) {
                             unreadCount = 2
                         ),
                         ChatList.ChatItem(
-                            id = "2",
+                            id = "trainer1",
                             name = "John Trainer",
                             type = ChatList.ChatType.TRAINER,
                             lastMessage = "Great progress today!",
@@ -221,14 +205,12 @@ private fun ChatListScreenContentPreview(modifier: Modifier = Modifier) {
 @Composable
 private fun ChatListScreenContentDarkPreview(modifier: Modifier = Modifier) {
     AppTheme {
-        Box(
-            modifier = modifier.background(color = AppTheme.color.background)
-        ) {
+        Box(modifier = modifier.background(color = AppTheme.color.background)) {
             ChatListScreenContent(
                 state = ChatList.State(
                     chats = listOf(
                         ChatList.ChatItem(
-                            id = "1",
+                            id = "ai_chat",
                             name = "AI Assistant",
                             type = ChatList.ChatType.AI_ASSISTANT,
                             lastMessage = "How can I help you today?",
@@ -236,7 +218,7 @@ private fun ChatListScreenContentDarkPreview(modifier: Modifier = Modifier) {
                             unreadCount = 2
                         ),
                         ChatList.ChatItem(
-                            id = "2",
+                            id = "trainer1",
                             name = "John Trainer",
                             type = ChatList.ChatType.TRAINER,
                             lastMessage = "Great progress today!",

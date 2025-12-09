@@ -29,6 +29,8 @@ import ua.nure.bonte.repository.activity.ActivityRepository
 import ua.nure.bonte.repository.activity.ActivityRepositoryImpl
 import ua.nure.bonte.repository.ai.AIRepository
 import ua.nure.bonte.repository.ai.AIRepositoryImpl
+import ua.nure.bonte.repository.messages.MessagesRepository
+import ua.nure.bonte.repository.messages.MessagesRepositoryImpl
 import ua.nure.bonte.repository.trainer.TrainerRepositoryImpl
 import javax.inject.Singleton
 
@@ -134,6 +136,17 @@ object RepositoryModule {
         @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
         dbRepository: DbRepository
     ): AIRepository = AIRepositoryImpl(
+        httpClient = httpClient,
+        appDb = dbRepository.db,
+        dbDispatcher = dbDeliveryDispatcher
+    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    fun provideMessagesRepository(
+        httpClient: HttpClient,
+        @DbDeliveryDispatcher dbDeliveryDispatcher: CloseableCoroutineDispatcher,
+        dbRepository: DbRepository
+    ): MessagesRepository = MessagesRepositoryImpl(
         httpClient = httpClient,
         appDb = dbRepository.db,
         dbDispatcher = dbDeliveryDispatcher
