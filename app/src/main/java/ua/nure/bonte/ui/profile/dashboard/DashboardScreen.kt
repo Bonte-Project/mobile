@@ -2,24 +2,37 @@ package ua.nure.bonte.ui.profile.dashboard
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -30,15 +43,19 @@ import com.kizitonwose.calendar.compose.VerticalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import io.ktor.websocket.Frame
 import ua.nure.bonte.R
 import ua.nure.bonte.db.data.entity.ProfileEntity
+import ua.nure.bonte.db.data.entity.SessionEntity
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.dto.NutritionGoalRequest
+import ua.nure.bonte.repository.dto.SessionStatus
 import ua.nure.bonte.ui.compose.*
 
 import ua.nure.bonte.ui.theme.AppTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -90,8 +107,10 @@ private fun DashboardScreenContent(
         }
     }
 
-    val todayNutritionLogs = state.nutritionLogs.filter { it.createdAt != null && isToday(it.createdAt) }
-    val todayActivityLogs = state.activityLogs.filter { it.completedAt != null && isToday(it.completedAt) }
+    val todayNutritionLogs =
+        state.nutritionLogs.filter { it.createdAt != null && isToday(it.createdAt) }
+    val todayActivityLogs =
+        state.activityLogs.filter { it.completedAt != null && isToday(it.completedAt) }
     val todaySleepLogs = state.sleepLogs.filter { it.startTime != null && isToday(it.startTime) }
 
     val totalCalories = todayNutritionLogs.sumOf { it.calories }
@@ -162,9 +181,9 @@ private fun DashboardScreenContent(
             )
 
             BonteDashboardMainInfo(
-                name = state.profile?.fullName ?: "",
-                role = state.profile?.role ?: "",
-                avatarUrl = state.profile?.avatarUrl,
+                name = state.profile?.profileEntity?.fullName ?: "",
+                role = state.profile?.profileEntity?.role ?: "",
+                avatarUrl = state.profile?.profileEntity?.avatarUrl,
                 onSettingsClick = { onAction(Dashboard.Action.OnNavigate(Screen.Profile.Settings)) },
             )
 
@@ -234,32 +253,48 @@ private fun DashboardScreenContent(
                 }
 
                 item {
-                    VerticalCalendar(
-                        modifier = Modifier.height(400.dp),
-                        state = calendarState,
-                        dayContent = { calendarDay ->
-                            Day(
-                                day = calendarDay,
+                    Column() {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = AppTheme.dimension.normal),
+                            text = calendarState
+                                .firstVisibleMonth
+                                .yearMonth
+                                .format(DateTimeFormatter.ofPattern("yyyy")),
+                            style = AppTheme.typography.large.copy(
+                                textAlign = TextAlign.Center
                             )
-                        },
-                        monthHeader = { month ->
-                            val daysOfWeek: List<DayOfWeek> = month.weekDays.first().map { it.date.dayOfWeek }
-                            Column(
-
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = AppTheme.dimension.normal),
-                                    text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM")),
-                                    style = AppTheme.typography.regular.copy(
-                                        textAlign = TextAlign.Center
-                                    )
+                        )
+                        VerticalCalendar(
+                            modifier = Modifier.height(500.dp),
+                            state = calendarState,
+                            dayContent = { calendarDay ->
+                                Day(
+                                    day = calendarDay,
+                                    sessions = state.sessions?.get(calendarDay.date.dayOfYear)
                                 )
-                                WeekdaysHeader(daysOfWeek = daysOfWeek)
-                            }
-                        },
-                    )
+                            },
+                            monthHeader = { month ->
+                                val daysOfWeek: List<DayOfWeek> =
+                                    month.weekDays.first().map { it.date.dayOfWeek }
+                                Column(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = AppTheme.dimension.normal),
+                                        text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM")),
+                                        style = AppTheme.typography.regular.copy(
+                                            textAlign = TextAlign.Center
+                                        )
+                                    )
+                                    WeekdaysHeader(daysOfWeek = daysOfWeek)
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -312,11 +347,101 @@ private fun WeekdaysHeader(daysOfWeek: List<DayOfWeek>) {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Day(
     day: CalendarDay,
-
+    sessions: List<SessionEntity>? = null
 ) {
+    TooltipBox(
+        tooltip = {
+            if (sessions?.isNotEmpty() == true) {
+                Column(
+                    modifier = Modifier
+                        .width(200.dp),
+                ) {
+                    sessions.take(15).forEach {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp)
+                                .clip(shape = RoundedCornerShape(4.dp))
+                                .background(
+                                    color = when (it.status) {
+                                        SessionStatus.scheduled -> AppTheme.color.active
+                                        SessionStatus.completed -> AppTheme.color.grey
+                                        SessionStatus.cancelled -> Color.Red
+                                    },
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = AppTheme.dimension.small)
+                            ,
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(vertical = AppTheme.dimension.small),
+                                text = it.scheduledAt.format(DateTimeFormatter.ofPattern("HH:mm")),
+                                style = AppTheme.typography.regular
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = AppTheme.dimension.normal)
+                                    .weight(1F),
+                                text = it.name,
+                                style = AppTheme.typography.regular
+                            )
+                        }
+                    }
+
+                }
+            }
+        },
+        state = rememberTooltipState(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Above,
+            spacingBetweenTooltipAndAnchor = 4.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier.aspectRatio(0.5F)
+        ) {
+            Box(
+                contentAlignment = Alignment.TopStart
+
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    items(items = sessions ?: emptyList(), key = { it.id }) {
+                        Box(
+                            modifier = Modifier
+                                .height(8.dp)
+                                .fillMaxWidth()
+                                .background(
+                                    color = when (it.status) {
+                                        SessionStatus.scheduled -> AppTheme.color.active
+                                        SessionStatus.completed -> AppTheme.color.grey
+                                        SessionStatus.cancelled -> Color.Red
+                                    }
+                                )
+                        )
+                    }
+
+                }
+
+                Text(
+                    text = day.date.dayOfMonth.toString(),
+                    style = AppTheme.typography.small
+                )
+
+            }
+        }
+
+    }
+
 
 }
 
@@ -332,4 +457,52 @@ private fun DashboardPreview() {
             onAction = {}
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TooltipPreview(
+    modifier: Modifier = Modifier,
+    sessions: List<SessionEntity> = SessionEntity.preview
+) {
+    Column(
+        modifier = Modifier
+            .size(width = 150.dp, height = 200.dp),
+    ) {
+
+        sessions.take(15).forEach {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(4.dp))
+                    .background(
+                        color = when (it.status) {
+                            SessionStatus.scheduled -> AppTheme.color.active
+                            SessionStatus.completed -> AppTheme.color.grey
+                            SessionStatus.cancelled -> Color.Red
+                        },
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(horizontal = AppTheme.dimension.small)
+                ,
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = AppTheme.dimension.small),
+                    text = it.scheduledAt.format(DateTimeFormatter.ofPattern("HH:mm")),
+                    style = AppTheme.typography.regular
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(start = AppTheme.dimension.normal)
+                        .weight(1F),
+                    text = it.name,
+                    style = AppTheme.typography.regular
+                )
+            }
+        }
+
+    }
+
 }

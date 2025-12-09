@@ -1,5 +1,6 @@
 package ua.nure.bonte.repository.sessions
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -32,11 +33,18 @@ class SessionsRepositoryImpl @Inject constructor(
     private val dbRepository: DbRepository,
     @DbDeliveryDispatcher private val dbDeliveryDispatcher: CoroutineDispatcher
 ) : SessionsRepository {
+    private val TAG by lazy { SessionsRepositoryImpl::class.simpleName }
+
     override suspend fun getUserSessions(): Result<SessionsDto, DataError> =
         withContext(Dispatchers.IO) {
+            Log.d(TAG, "getUserSessions: ...")
+
+
+
             safeCall<SessionsDto> {
                 httpClient.get("training-sessions")
             }.onSuccess { sessionsDto ->
+                Log.d(TAG, "getUserSessions: ${sessionsDto.sessions.size}")
                 dbRepository.db.sessionDao.insert(
                     sessionsDto.sessions.map { it.toEntity() }
                 )

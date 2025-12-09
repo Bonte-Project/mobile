@@ -1,7 +1,9 @@
 package ua.nure.bonte.ui.profile.dashboard
 
+import ua.nure.bonte.db.data.entity.Profile
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.db.data.entity.ProfileEntity
+import ua.nure.bonte.db.data.entity.SessionEntity
 import ua.nure.bonte.repository.dto.ActivityLogDto
 import ua.nure.bonte.repository.dto.NutritionGoalRequest
 import ua.nure.bonte.repository.dto.NutritionLogDto
@@ -23,7 +25,8 @@ object Dashboard {
 
     data class State(
         val inProgress: Boolean = false,
-        val profile: ProfileEntity? = null,
+        val profile: Profile? = null,
+        val sessions: Map<Int, List<SessionEntity>>? = null,
         val nutritionLogs: List<NutritionLogDto> = emptyList(),
         val sleepLogs: List<SleepLogDto> = emptyList(),
         val activityLogs: List<ActivityLogDto> = emptyList(),

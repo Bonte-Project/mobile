@@ -111,7 +111,14 @@ class DashboardViewModel @Inject constructor(
 
     private fun observeMe() = viewModelScope.launch {
         userRepository.getMe().collect { profile ->
-            _state.update { it.copy(profile = profile.profileEntity) }
+            _state.update {
+                it.copy(
+                    profile = profile,
+                    sessions = profile.sessions?.groupBy {
+                        it.scheduledAt.dayOfYear
+                    }
+                )
+            }
         }
     }
 
