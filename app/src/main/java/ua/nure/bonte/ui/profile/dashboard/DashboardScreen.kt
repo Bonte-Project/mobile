@@ -4,7 +4,11 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,9 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.kizitonwose.calendar.compose.VerticalCalendar
+import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import ua.nure.bonte.R
 import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.navigation.Screen
@@ -26,7 +37,12 @@ import ua.nure.bonte.repository.dto.NutritionGoalRequest
 import ua.nure.bonte.ui.compose.*
 
 import ua.nure.bonte.ui.theme.AppTheme
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel, navController: NavController) {
@@ -53,6 +69,18 @@ private fun DashboardScreenContent(
     state: Dashboard.State,
     onAction: (Dashboard.Action) -> Unit
 ) {
+
+    val currentMonth = remember { YearMonth.now() }
+    val startMonth = remember { currentMonth.minusMonths(100) }
+    val endMonth = remember { currentMonth.plusMonths(100) }
+    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
+
+    val calendarState = rememberCalendarState(
+        startMonth = startMonth,
+        endMonth = endMonth,
+        firstVisibleMonth = currentMonth,
+        firstDayOfWeek = firstDayOfWeek
+    )
 
     fun isToday(date: String): Boolean {
         return try {
@@ -204,6 +232,35 @@ private fun DashboardScreenContent(
                         ) {}
                     }
                 }
+
+                item {
+                    VerticalCalendar(
+                        modifier = Modifier.height(400.dp),
+                        state = calendarState,
+                        dayContent = { calendarDay ->
+                            Day(
+                                day = calendarDay,
+                            )
+                        },
+                        monthHeader = { month ->
+                            val daysOfWeek: List<DayOfWeek> = month.weekDays.first().map { it.date.dayOfWeek }
+                            Column(
+
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = AppTheme.dimension.normal),
+                                    text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM")),
+                                    style = AppTheme.typography.regular.copy(
+                                        textAlign = TextAlign.Center
+                                    )
+                                )
+                                WeekdaysHeader(daysOfWeek = daysOfWeek)
+                            }
+                        },
+                    )
+                }
             }
         }
 
@@ -231,6 +288,37 @@ data class RecentItem(
     val time: String,
     val icon: Int
 )
+
+@Composable
+private fun WeekdaysHeader(daysOfWeek: List<DayOfWeek>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        daysOfWeek.forEach { daysOfWeek ->
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 0.5.dp)
+                    .background(color = AppTheme.color.grey.copy(alpha = .3F))
+                    .padding(vertical = 4.dp)
+                    .weight(1F),
+                text = daysOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                style = AppTheme.typography.small.copy(
+                    textAlign = TextAlign.Center
+                )
+            )
+        }
+    }
+}
+@Composable
+fun Day(
+    day: CalendarDay,
+
+) {
+
+}
 
 @Preview(showSystemUi = true)
 @Composable

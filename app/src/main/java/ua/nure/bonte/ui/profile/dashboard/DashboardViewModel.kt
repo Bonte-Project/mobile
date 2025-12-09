@@ -15,12 +15,18 @@ import kotlinx.coroutines.launch
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.activity.ActivityRepository
 import ua.nure.bonte.repository.auth.AuthRepository
+import ua.nure.bonte.repository.map
 import ua.nure.bonte.repository.nutrition.NutritionRepository
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
+import ua.nure.bonte.repository.sessions.SessionsRepository
 import ua.nure.bonte.repository.sleeplog.SleepLogRepository
 import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.ui.profile.dashboard.Dashboard.Event.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,7 +35,8 @@ class DashboardViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val nutritionRepository: NutritionRepository,
     private val sleepRepository: SleepLogRepository,
-    private val activityRepository: ActivityRepository
+    private val activityRepository: ActivityRepository,
+    private val sessionsRepository: SessionsRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(Dashboard.State())
     val state = _state.stateIn(
@@ -39,11 +46,16 @@ class DashboardViewModel @Inject constructor(
     private val _event = MutableSharedFlow<Dashboard.Event>()
     val event = _event.asSharedFlow()
 
+
+    private var loadMeJob: Job? = null
+    private var loadSessionsJob: Job? = null
+
     init {
         loadMe()
         observeMe()
         observeData()
         refreshAllLogs()
+        loadSessions()
     }
 
     private fun refreshAllLogs() {
@@ -89,7 +101,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private var loadMeJob: Job? = null
 
     private fun loadMe() {
         loadMeJob?.cancel()
@@ -103,4 +114,12 @@ class DashboardViewModel @Inject constructor(
             _state.update { it.copy(profile = profile.profileEntity) }
         }
     }
+
+    private fun loadSessions() {
+        loadSessionsJob?.cancel()
+        loadSessionsJob = viewModelScope.launch {
+            sessionsRepository.getUserSessions()
+        }
+    }
+
 }
