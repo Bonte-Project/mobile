@@ -89,6 +89,7 @@ fun showBottomNavigationBar(navDestination: NavDestination?) =
             Screen.Profile.Settings::class.qualifiedName,
             Screen.Trainer.TrainerList::class.qualifiedName,
             Screen.Chat.ChatList::class.qualifiedName,
-            Screen.Analytics.AnalyticsView::class.qualifiedName
+            Screen.Analytics.AnalyticsView::class.qualifiedName,
+            Screen.OwnTrainer.View::class.qualifiedName,
         )
     } ?: false
