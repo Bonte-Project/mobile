@@ -39,20 +39,6 @@ class TrainerViewModel @Inject constructor(
     private val _event = MutableSharedFlow<Trainer.Event>()
     val event = _event.asSharedFlow()
 
-    init {
-        observeProfile()
-    }
-
-    private fun observeProfile() = viewModelScope.launch {
-        userRepository.getMe()
-            .distinctUntilChanged()
-            .collectLatest { profile ->
-                _state.update { it.copy(profile = profile) }
-                loadTrainer()
-            }
-    }
-    fun refreshTrainer() {
-        loadTrainer()
     private var loadSessionsJob: Job? = null
 
     init {
@@ -109,4 +95,3 @@ class TrainerViewModel @Inject constructor(
         }
     }
 }
-

@@ -152,7 +152,8 @@ object RepositoryModule {
     ): MessagesRepository = MessagesRepositoryImpl(
         httpClient = httpClient,
         appDb = dbRepository.db,
-        dbDispatcher = dbDeliveryDispatcher
+        dbDispatcher = dbDeliveryDispatcher,
+    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
