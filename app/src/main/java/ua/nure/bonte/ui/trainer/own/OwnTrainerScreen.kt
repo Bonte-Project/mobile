@@ -27,6 +27,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import ua.nure.bonte.R
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.dto.ExperienceRequest
+import ua.nure.bonte.ui.compose.BonteAddSessionDialog
 import ua.nure.bonte.ui.compose.BonteButton
 import ua.nure.bonte.ui.compose.BonteDashboardMainInfo
 import ua.nure.bonte.ui.compose.BonteExperienceCard
@@ -188,6 +189,21 @@ fun OwnTrainerScreenContent(
                     onAction(OwnTrainer.Action.OnCreateTrainer)
                 }
             }
+        }
+
+        if(state.showAddSessionDialog) {
+            BonteAddSessionDialog(
+                sessionName = state.sessionName ?: "",
+                onSessionNameChanged = {
+                    onAction(OwnTrainer.Action.OnSessionNameChanged(name = it))
+                },
+                onApply = {
+                    onAction(OwnTrainer.Action.OnCreateSession)
+                },
+                onDismiss = {
+                    onAction(OwnTrainer.Action.OnDismissAddSessionDialog)
+                }
+            )
         }
     }
 }

@@ -18,6 +18,8 @@ object OwnTrainer {
         data class OnDayClick(val date: LocalDate) : Action
         data object OnShowAddSessionDialog : Action
         data object OnDismissAddSessionDialog : Action
+        data class OnSessionNameChanged(val name: String) : Action
+        data object OnCreateSession : Action
     }
 
     data class State(
@@ -27,5 +29,6 @@ object OwnTrainer {
         val sessions: Map<Int, List<SessionEntity>>? = null,
         val showAddSessionDialog: Boolean = false,
         val selectedDay: LocalDate? = null,
+        val sessionName: String? = null,
     )
 }

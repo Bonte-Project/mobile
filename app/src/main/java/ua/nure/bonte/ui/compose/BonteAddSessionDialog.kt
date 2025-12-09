@@ -74,7 +74,7 @@ fun BonteAddSessionDialog(
 
 @Preview
 @Composable
-fun BonteAddSessionDialogPreview(modifier: Modifier = Modifier) {
+private fun BonteAddSessionDialogPreview(modifier: Modifier = Modifier) {
     AppTheme {
         BonteAddSessionDialog(
             sessionName = "some name",
@@ -87,7 +87,7 @@ fun BonteAddSessionDialogPreview(modifier: Modifier = Modifier) {
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-fun BonteAddSessionDialogDarkPreview(modifier: Modifier = Modifier) {
+private fun BonteAddSessionDialogDarkPreview(modifier: Modifier = Modifier) {
     AppTheme {
         BonteAddSessionDialog(
             sessionName = "some name",

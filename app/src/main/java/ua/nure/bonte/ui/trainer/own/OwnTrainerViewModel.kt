@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.sessions.SessionsRepository
 import ua.nure.bonte.repository.trainer.TrainerRepository
+import ua.nure.bonte.ui.trainer.own.OwnTrainer.Event.*
 import ua.nure.bonte.ui.trainer.view.Trainer
 
 import javax.inject.Inject
@@ -46,6 +47,7 @@ class OwnTrainerViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     private var loadTrainerJob: Job? = null
+    private var createSessionJob: Job? = null
 
     fun onAction(action: OwnTrainer.Action) = viewModelScope.launch {
         when (action) {
@@ -69,11 +71,29 @@ class OwnTrainerViewModel @Inject constructor(
                 }
             }
 
-            is OwnTrainer.Action.OnNavigate -> _event.emit(OwnTrainer.Event.OnNavigate(route = action.route))
+            is OwnTrainer.Action.OnNavigate -> _event.emit(OnNavigate(route = action.route))
             OwnTrainer.Action.OnShowAddSessionDialog -> {
                 _state.update { s ->
                     s.copy(
                         showAddSessionDialog = true
+                    )
+                }
+            }
+
+            OwnTrainer.Action.OnCreateSession -> {
+                createSession()
+                _state.update { s ->
+                    s.copy(
+                        showAddSessionDialog = false,
+                        selectedDay = null,
+                    )
+                }
+
+            }
+            is OwnTrainer.Action.OnSessionNameChanged -> {
+                _state.update { s ->
+                    s.copy(
+                        sessionName = action.name
                     )
                 }
             }
@@ -124,6 +144,14 @@ class OwnTrainerViewModel @Inject constructor(
             .collect {
                 sessionsRepository.getTrainerSessions()
             }
+    }
+
+    private fun createSession() {
+        createSessionJob?.cancel()
+        createSessionJob = viewModelScope.launch {
+
+        }
+
     }
 
 
