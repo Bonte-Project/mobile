@@ -16,9 +16,10 @@ fun BonteVerticalColumnGraph(
     modifier: Modifier = Modifier,
     values: List<Triple<Int, String, LocalDateTime>>
 ) {
+    val maxValue = values.maxOfOrNull { it.first }.takeIf { it != null && it > 0 } ?: 1
+
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
@@ -26,6 +27,7 @@ fun BonteVerticalColumnGraph(
             ColumnItem(
                 value = value,
                 label = label,
+                maxValue = maxValue,
                 isSelected = date.toLocalDate() == LocalDate.now()
             )
         }

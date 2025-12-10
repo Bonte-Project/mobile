@@ -28,19 +28,28 @@ fun ColumnItem(
     modifier: Modifier = Modifier,
     value: Int,
     label: String,
+    maxValue: Int,
     isSelected: Boolean = false,
 ) {
+    val maxHeight = 120.dp
+
+    val barHeight = if (value == 0) {
+        6.dp
+    } else {
+        maxHeight * (value.toFloat() / maxValue.toFloat())
+    }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
-        ) {
+    ) {
         Spacer(
             modifier = Modifier
                 .width(24.dp)
-                .height(if(value == 0) 5.dp else (value * 24).dp)
-                .clip(shape = RoundedCornerShape(20.dp))
-                .background(if(isSelected) AppTheme.color.active else AppTheme.color.accent)
+                .height(barHeight)
+                .clip(RoundedCornerShape(20.dp))
+                .background(if (isSelected) AppTheme.color.active else AppTheme.color.accent)
         )
         Text(
             text = label,
@@ -58,12 +67,14 @@ private fun ColumnItemPreview(modifier: Modifier = Modifier) {
                 modifier = modifier,
                 value = 0,
                 label = "Mon",
+                maxValue = 6,
                 isSelected = true
             )
             ColumnItem(
                 modifier = modifier,
                 value = 10,
-                label = "Mon"
+                label = "Mon",
+                maxValue = 6
             )
         }
 
