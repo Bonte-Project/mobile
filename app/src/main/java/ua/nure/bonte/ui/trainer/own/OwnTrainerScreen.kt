@@ -1,70 +1,74 @@
-package ua.nure.bonte.ui.trainer.view
+package ua.nure.bonte.ui.trainer.own
 
-import android.content.res.Configuration
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import ua.nure.bonte.ui.compose.*
-import ua.nure.bonte.ui.theme.AppTheme
-import ua.nure.bonte.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.kizitonwose.calendar.compose.VerticalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import ua.nure.bonte.R
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.dto.ExperienceRequest
-import ua.nure.bonte.ui.profile.dashboard.Dashboard
+import ua.nure.bonte.ui.compose.BonteAddSessionDialog
+import ua.nure.bonte.ui.compose.BonteButton
+import ua.nure.bonte.ui.compose.BonteDashboardMainInfo
+import ua.nure.bonte.ui.compose.BonteExperienceCard
+import ua.nure.bonte.ui.compose.BonteHeader
+import ua.nure.bonte.ui.compose.BonteHeaderType
+import ua.nure.bonte.ui.compose.BonteInfoCard
+import ua.nure.bonte.ui.compose.BonteScreen
+import ua.nure.bonte.ui.compose.Day
+import ua.nure.bonte.ui.compose.WeekdaysHeader
+import ua.nure.bonte.ui.theme.AppTheme
+import ua.nure.bonte.ui.trainer.view.Trainer
 import java.time.DayOfWeek
-import java.time.ZoneId
-import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
-private fun convertISOToMillis(isoString: String): Long? {
-    return try {
-        val localDate = LocalDate.parse(isoString.substring(0, 10), DateTimeFormatter.ISO_LOCAL_DATE)
-        localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    } catch (e: Exception) {
-        null
-    }
-}
-
 @Composable
-fun TrainerScreen(
-    viewModel: TrainerViewModel,
-    navController: NavController,
+fun OwnTrainerScreen(
+    viewModel: OwnTrainerViewModel,
+    navController: NavController
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collect {
             when(it) {
-                Trainer.Event.OnBack -> navController.navigateUp()
-                is Trainer.Event.OnNavigate -> navController.navigate(route = it.route)
-                is Trainer.Event.OnError -> {}
+                OwnTrainer.Event.OnBack -> navController.navigateUp()
+                is OwnTrainer.Event.OnNavigate -> navController.navigate(route = it.route)
             }
         }
     }
 
-    TrainerScreenContent(
+    OwnTrainerScreenContent(
         state = state,
-        onAction = viewModel::onAction,
+        onAction = viewModel::onAction
     )
+
 }
 
 @Composable
-private fun TrainerScreenContent(
-    state: Trainer.State,
-    onAction: (Trainer.Action) -> Unit,
+fun OwnTrainerScreenContent(
+    state: OwnTrainer.State,
+    onAction: (OwnTrainer.Action) -> Unit
 ) {
     BonteScreen {
         state.trainer?.let { trainerData ->
@@ -89,8 +93,8 @@ private fun TrainerScreenContent(
                     BonteHeader(
                         text = stringResource(R.string.trainerProfile),
                         type = BonteHeaderType.Settings,
-                        onBackClick = { onAction(Trainer.Action.OnBack) },
-                        onSettingsClick = { onAction(Trainer.Action.OnNavigate(Screen.Trainer.EditTrainer)) }
+                        onBackClick = { onAction(OwnTrainer.Action.OnBack) },
+                        onSettingsClick = { onAction(OwnTrainer.Action.OnNavigate(Screen.Trainer.EditTrainer)) }
                     )
 
                     BonteDashboardMainInfo(
@@ -146,7 +150,7 @@ private fun TrainerScreenContent(
                                     day = calendarDay,
                                     sessions = state.sessions?.get(calendarDay.date.dayOfYear)
                                 ) {
-                                    onAction(Trainer.Action.OnDayClick(date = calendarDay.date))
+                                    onAction(OwnTrainer.Action.OnDayClick(date = calendarDay.date))
                                 }
                             },
                             monthHeader = { month ->
@@ -173,52 +177,34 @@ private fun TrainerScreenContent(
 
             }
 
+        } ?: run {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                BonteButton(
+                    text = stringResource(R.string.create)
+                ) {
+                    onAction(OwnTrainer.Action.OnCreateTrainer)
+                }
+            }
         }
-    }
-}
 
-@Composable
-private fun InfoRow(label: String, value: String) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = AppTheme.dimension.small)) {
-        Text(
-            text = label,
-            style = AppTheme.typography.regular,
-            color = AppTheme.color.foreground
-        )
-        Text(
-            text = value,
-            style = AppTheme.typography.regular,
-            color = AppTheme.color.foreground
-        )
-    }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun TrainerScreenPreview(modifier: Modifier = Modifier) {
-    AppTheme {
-        Box(
-            modifier = modifier.background(color = AppTheme.color.background).fillMaxSize()
-        ) {
-            TrainerScreenContent(
-                state = Trainer.State(),
-                onAction = {},
+        if(state.showAddSessionDialog) {
+            BonteAddSessionDialog(
+                sessionName = state.sessionName ?: "",
+                onSessionNameChanged = {
+                    onAction(OwnTrainer.Action.OnSessionNameChanged(name = it))
+                },
+                onApply = {
+                    onAction(OwnTrainer.Action.OnCreateSession)
+                },
+                onDismiss = {
+                    onAction(OwnTrainer.Action.OnDismissAddSessionDialog)
+                }
             )
         }
     }
 }
 
-@Preview(showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun TrainerScreenDarkPreview(modifier: Modifier = Modifier) {
-    AppTheme {
-        Box(
-            modifier = modifier.background(color = AppTheme.color.background).fillMaxSize()
-        ) {
-            TrainerScreenContent(
-                state = Trainer.State(),
-                onAction = {},
-            )
-        }
-    }
-}

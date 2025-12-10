@@ -53,6 +53,7 @@ fun NavGraph(
         trainerGraph(navController = navController)
         analyticsGraph(navController = navController)
         chatGraph(navController = navController)
+        ownTrainerGraph(navController = navController)
     }
 
 }

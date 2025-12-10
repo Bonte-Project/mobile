@@ -161,6 +161,8 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.google.signin)
 
+    implementation(libs.kizitonwose.calendar)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

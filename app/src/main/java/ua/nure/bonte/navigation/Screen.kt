@@ -19,7 +19,7 @@ sealed class Screen {
     }
 
     @Serializable sealed class Trainer: Screen() {
-        @Serializable data object TrainerProfile : Trainer()
+        @Serializable data class TrainerProfile(val trainerId: String) : Trainer()
         @Serializable data object TrainerList : Trainer()
         @Serializable data object EditTrainer : Trainer()
     }
@@ -31,5 +31,10 @@ sealed class Screen {
     @Serializable sealed class Chat: Screen() {
         @Serializable data object ChatList : Chat()
         @Serializable data class AIChatDetail(val chatId: String) : Chat()
+        @Serializable data class TrainerChat(val chatId: String) : Chat()
+    }
+
+    @Serializable sealed class OwnTrainer : Screen() {
+        @Serializable data object View : OwnTrainer()
     }
 }
