@@ -37,7 +37,7 @@ import ua.nure.bonte.db.data.entity.AiMessageEntity
         AiConversationEntity::class,
         AiMessageEntity::class,
     ],
-    version = 8
+    version = 9
 )
 @TypeConverters(DbConverters::class)
 abstract class AppDb : RoomDatabase() {
