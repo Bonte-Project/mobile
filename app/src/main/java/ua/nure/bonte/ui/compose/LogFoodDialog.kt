@@ -48,9 +48,12 @@ fun LogFoodDialog(
         )
     }
     val isFormValid = foodName.isNotBlank() && grams.isNotBlank() && energy.isNotBlank()
-    val todayMillis = remember {
-        LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    }
+    val todayEndOfDayMillis = LocalDate.now()
+        .plusDays(1)
+        .atStartOfDay(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli() - 1
+
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -74,7 +77,7 @@ fun LogFoodDialog(
                         modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.dimension.small),
                         label = stringResource(R.string.eatenAt),
                         value = eatenAtDate,
-                        maxDateMillis = todayMillis,
+                        maxDateMillis = todayEndOfDayMillis,
                         onValueChange = { eatenAtDate = it }
                     )
                     BonteInputField(

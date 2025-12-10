@@ -53,9 +53,11 @@ fun ActivityLogDialog(
         )
     }
 
-    val todayMillis = remember {
-        LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    }
+    val todayEndOfDayMillis = LocalDate.now()
+        .plusDays(1)
+        .atStartOfDay(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli() - 1
 
     val isFormValid = activityType.isNotBlank() && durationMinutes.isNotBlank()
 
@@ -86,7 +88,7 @@ fun ActivityLogDialog(
                             .padding(bottom = AppTheme.dimension.small),
                         label = stringResource(R.string.completedAt),
                         value = completedAt,
-                        maxDateMillis = todayMillis,
+                        maxDateMillis = todayEndOfDayMillis,
                         onValueChange = { completedAt = it }
                     )
                     BonteInputField(
