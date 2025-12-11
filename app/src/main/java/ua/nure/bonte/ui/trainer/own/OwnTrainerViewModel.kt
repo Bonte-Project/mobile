@@ -1,5 +1,7 @@
 package ua.nure.bonte.ui.trainer.own
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,12 +19,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.nure.bonte.repository.dto.CreateSleepLogDto
+import ua.nure.bonte.repository.dto.TrainerRequest
 import ua.nure.bonte.repository.messages.MessagesRepository
 import ua.nure.bonte.repository.onError
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.sessions.SessionsRepository
 import ua.nure.bonte.repository.trainer.TrainerRepository
 import ua.nure.bonte.repository.user.UserRepository
+import ua.nure.bonte.ui.addmenu.AddMenu
 import ua.nure.bonte.ui.compose.UserHolder
 import ua.nure.bonte.ui.trainer.own.OwnTrainer.Event.*
 import java.time.LocalDateTime
@@ -62,7 +67,34 @@ class OwnTrainerViewModel @Inject constructor(
     fun onAction(action: OwnTrainer.Action) = viewModelScope.launch {
         when (action) {
             OwnTrainer.Action.OnBack -> _event.emit(OnBack)
-            OwnTrainer.Action.OnCreateTrainer -> {}
+            OwnTrainer.Action.OnCreateTrainerClick -> {
+                _state.update { it.copy(showCreateTrainerDialog = true) }
+            }
+
+            OwnTrainer.Action.OnDismissCreateTrainerDialog -> {
+                _state.update { it.copy(showCreateTrainerDialog = false) }
+            }
+            is OwnTrainer.Action.OnSaveTrainer -> {
+                _state.update { it.copy(inProgress = true) }
+
+                val trainerRequest = TrainerRequest(
+                    bio = action.bio,
+                    certification = action.certification,
+                    specialization = action.specialization,
+                    location = action.location,
+                    isActive = action.isActive,
+                )
+
+                trainerRepository.createTrainer(trainerRequest)
+                    .onSuccess {
+                        Log.d(TAG, "Trainer saved successfully: $it")
+                        _state.update { it.copy(showCreateTrainerDialog = false, inProgress = false) }
+                        _event.emit(OwnTrainer.Event.OnBack)
+                    }.onError { error ->
+                        Log.e(TAG, "Failed to save trainer: $error")
+                        _state.update { it.copy(inProgress = false) }
+                    }
+            }
             is OwnTrainer.Action.OnDayClick -> {
                 _state.update { s ->
                     s.copy(

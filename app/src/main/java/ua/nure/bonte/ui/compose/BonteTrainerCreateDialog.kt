@@ -15,14 +15,13 @@ import ua.nure.bonte.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BonteTrainerCreateDialog(
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onCreate: (
         bio: String,
         certification: String,
         specialization: String,
-        experience: List<ExperienceRequest>,
-        location: String
+        location: String,
+        isActive: Boolean
     ) -> Unit,
 ) {
     var bio by remember { mutableStateOf("") }
@@ -30,16 +29,6 @@ fun BonteTrainerCreateDialog(
     var specialization by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
 
-    val experienceItems = remember { mutableStateListOf<ExperienceRequest>() }
-
-    fun addExperience() {
-        experienceItems.add(ExperienceRequest(
-            title = "",
-            description = "",
-            startDate = "",
-            endDate = ""
-        ))
-    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -81,62 +70,24 @@ fun BonteTrainerCreateDialog(
                     label = stringResource(R.string.specialization),
                     value = specialization
                 ) { specialization = it }
-            }
-
-            itemsIndexed(experienceItems) { index, item ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AppTheme.dimension.normal, vertical = AppTheme.dimension.small)
-                ) {
-                    BonteInputField(
-                        modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(R.string.experience),
-                        value = item.title
-                    ) { experienceItems[index] = item.copy(title = it) }
-
-                    BonteInputField(
-                        modifier = Modifier.fillMaxWidth().padding(top = AppTheme.dimension.small),
-                        label = stringResource(R.string.experienceDescription),
-                        value = item.description
-                    ) { experienceItems[index] = item.copy(description = it) }
-                    BonteInputField(
-                        modifier = Modifier.fillMaxWidth().padding(top = AppTheme.dimension.small),
-                        label = stringResource(R.string.startDate),
-                        value = item.startDate
-                    ) { experienceItems[index] = item.copy(startDate = it) }
-
-                    BonteInputField(
-                        modifier = Modifier.fillMaxWidth().padding(top = AppTheme.dimension.small),
-                        label = stringResource(R.string.endDate),
-                        value = item.endDate
-                    ) { experienceItems[index] = item.copy(endDate = it) }
-                }
-            }
-
-            item {
-                BonteButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AppTheme.dimension.normal, vertical = AppTheme.dimension.small),
-                    text = stringResource(R.string.addExperience)
-                ) { addExperience() }
-
                 BonteInputField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AppTheme.dimension.normal, vertical = AppTheme.dimension.normal),
+                        .padding(horizontal = AppTheme.dimension.normal)
+                        .padding(bottom = AppTheme.dimension.normal),
                     label = stringResource(R.string.location),
                     value = location
                 ) { location = it }
-
+            }
+            item {
                 BonteButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(all = AppTheme.dimension.normal),
                     text = stringResource(R.string.create)
                 ) {
-                    onCreate(bio, certification, specialization, experienceItems.toList(), location)
+                    onCreate(bio, certification, specialization, location, true)
+                    onDismiss()
                 }
             }
         }
@@ -149,7 +100,7 @@ private fun TrainerCreateDialogPreview() {
     AppTheme {
         BonteTrainerCreateDialog(
             onDismiss = {},
-            onCreate = { _, _, _, _, _ -> }
+            onCreate = { _, _, _, _, _-> }
         )
     }
 }

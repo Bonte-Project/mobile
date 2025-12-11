@@ -18,14 +18,19 @@ interface SessionDao {
 
     @Transaction
     suspend fun syncInsertForUser(list: List<SessionEntity>) {
+        if (list.isEmpty()) {
+            return
+        }
         val newIds = list.map { it.id }
         deleteNotInForUser(userId = list.first().userId, newIds)
         insert(list)
-
     }
 
     @Transaction
     suspend fun syncInsertForTrainer(list: List<SessionEntity>) {
+        if (list.isEmpty()) {
+            return
+        }
         val newIds = list.map { it.id }
         deleteNotInForTrainer(trainerId = list.first().trainerId, newIds)
         insert(list)

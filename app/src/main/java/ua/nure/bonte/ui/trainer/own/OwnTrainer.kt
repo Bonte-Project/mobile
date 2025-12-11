@@ -5,6 +5,7 @@ import ua.nure.bonte.db.data.entity.ProfileEntity
 import ua.nure.bonte.db.data.entity.SessionEntity
 import ua.nure.bonte.db.data.entity.Trainer
 import ua.nure.bonte.navigation.Screen
+import ua.nure.bonte.ui.addmenu.AddMenu
 import ua.nure.bonte.ui.compose.UserHolder
 import java.time.LocalDate
 import java.time.LocalTime
@@ -18,7 +19,15 @@ object OwnTrainer {
     sealed interface Action {
         data object OnBack : Action
         data class OnNavigate(val route: Screen) : Action
-        data object OnCreateTrainer : Action
+        data object OnCreateTrainerClick : Action
+        data object OnDismissCreateTrainerDialog : Action
+        data class OnSaveTrainer(
+            val bio: String?,
+            val certification: String?,
+            val specialization: String?,
+            val location: String? = null,
+            val isActive: Boolean
+        ) : OwnTrainer.Action
         data class OnDayClick(val date: LocalDate) : Action
         data object OnShowAddSessionDialog : Action
         data object OnDismissAddSessionDialog : Action
@@ -47,5 +56,6 @@ object OwnTrainer {
         val showSelectUserDialog: Boolean = false,
         val selectedUser: ProfileEntity? = null,
         val users: List<UserHolder>? = null,
+        val showCreateTrainerDialog: Boolean = false,
     )
 }

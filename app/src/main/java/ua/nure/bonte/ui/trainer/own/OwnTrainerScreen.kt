@@ -28,6 +28,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import ua.nure.bonte.R
 import ua.nure.bonte.navigation.Screen
 import ua.nure.bonte.repository.dto.ExperienceRequest
+import ua.nure.bonte.ui.addmenu.AddMenu
 import ua.nure.bonte.ui.compose.BonteAddSessionDialog
 import ua.nure.bonte.ui.compose.BonteButton
 import ua.nure.bonte.ui.compose.BonteDashboardMainInfo
@@ -38,7 +39,9 @@ import ua.nure.bonte.ui.compose.BonteInfoCard
 import ua.nure.bonte.ui.compose.BonteScreen
 import ua.nure.bonte.ui.compose.BonteSelectUsersDialog
 import ua.nure.bonte.ui.compose.BonteTimePicker
+import ua.nure.bonte.ui.compose.BonteTrainerCreateDialog
 import ua.nure.bonte.ui.compose.Day
+import ua.nure.bonte.ui.compose.SleepLogDialog
 import ua.nure.bonte.ui.compose.WeekdaysHeader
 import ua.nure.bonte.ui.theme.AppTheme
 import ua.nure.bonte.ui.trainer.view.Trainer
@@ -217,11 +220,18 @@ fun OwnTrainerScreenContent(
                 BonteButton(
                     text = stringResource(R.string.create)
                 ) {
-                    onAction(OwnTrainer.Action.OnCreateTrainer)
+                    onAction(OwnTrainer.Action.OnCreateTrainerClick)
                 }
             }
         }
-
+        if (state.showCreateTrainerDialog) {
+            BonteTrainerCreateDialog(
+                onDismiss = { onAction(OwnTrainer.Action.OnDismissCreateTrainerDialog) },
+                onCreate = { bio, certification, specialization, location, isActive ->
+                    onAction(OwnTrainer.Action.OnSaveTrainer(bio, certification, specialization, location, isActive))
+                }
+            )
+        }
         if (state.showAddSessionDialog) {
             BonteAddSessionDialog(
                 sessionName = state.sessionName ?: "",
