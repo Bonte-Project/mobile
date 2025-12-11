@@ -3,6 +3,8 @@ package ua.nure.bonte.ui.chats.trainerchat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ua.nure.bonte.db.data.entity.MessageEntity
@@ -10,6 +12,7 @@ import ua.nure.bonte.repository.messages.MessagesRepository
 import ua.nure.bonte.repository.trainer.TrainerRepository
 import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.repository.Result
+import ua.nure.bonte.repository.onSuccess
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +28,12 @@ class TrainerChatViewModel @Inject constructor(
     private val _event = MutableSharedFlow<TrainerChat.Event>()
     val event = _event.asSharedFlow()
     private var targetIsUser: Boolean = true
+    private var loadTrainerJob: Job? = null
+
+    init {
+        loadOwnTrainer()
+        observeMyTrainer()
+    }
 
     fun onAction(action: TrainerChat.Action) {
         when (action) {
@@ -117,5 +126,40 @@ class TrainerChatViewModel @Inject constructor(
                 toTrainer = amIUser // true если я юзер
             )
         }
+    }
+
+    private fun loadOwnTrainer() {
+        if (_state.value.myTrainer != null) {
+            return
+        }
+        loadTrainerJob?.cancel()
+        loadTrainerJob = viewModelScope.launch {
+            trainerRepository.loadMyTrainer()
+                .onSuccess { data ->
+                    _state.update { s ->
+                        s.copy(
+                            inProgress = false,
+                            myTrainerId = data.trainer.id
+                        )
+                    }
+                }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeMyTrainer() = viewModelScope.launch {
+        _state
+            .map { it.myTrainerId }
+            .distinctUntilChanged()
+            .filterNotNull()
+            .flatMapLatest { myTrainerId ->
+                trainerRepository.getTrainerFlowById(id = myTrainerId)
+            }.collect { trainer ->
+                _state.update { s ->
+                    s.copy(
+                        myTrainer = trainer,
+                    )
+                }
+            }
     }
 }

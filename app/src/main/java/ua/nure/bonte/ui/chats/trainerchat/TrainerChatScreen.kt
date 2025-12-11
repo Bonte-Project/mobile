@@ -75,8 +75,11 @@ private fun TrainerChatContent(
                 verticalArrangement = Arrangement.spacedBy(AppTheme.dimension.small)
             ) {
                 items(state.messages.reversed()) { message ->
-                    val currentIsUser = state.profile?.trainer?.let { false } ?: run { true }
-                    TrainerMessageItem(message = message, currentIsUser = currentIsUser)
+                    state.myTrainer?.let { myTrainerData ->
+                        TrainerMessageItem(message = message, true)
+                    }?: run{
+                        TrainerMessageItem(message = message, false)
+                    }
                 }
             }
 

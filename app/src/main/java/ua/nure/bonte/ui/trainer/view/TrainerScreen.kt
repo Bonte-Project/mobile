@@ -88,11 +88,8 @@ private fun TrainerScreenContent(
                 item {
                     BonteHeader(
                         text = stringResource(R.string.trainerProfile),
-                        type = BonteHeaderType.Settings,
                         onBackClick = { onAction(Trainer.Action.OnBack) },
-                        onSettingsClick = { onAction(Trainer.Action.OnNavigate(Screen.Trainer.EditTrainer)) }
                     )
-
                     BonteDashboardMainInfo(
                         modifier = Modifier.padding(bottom = AppTheme.dimension.normal),
                         name = trainerData.profile?.fullName ?: "",
@@ -100,6 +97,29 @@ private fun TrainerScreenContent(
                         avatarUrl = trainerData.profile?.avatarUrl,
                         onSettingsClick = {},
                     )
+
+                    state.myTrainer?.let { myTrainerData ->
+                        BonteButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = AppTheme.dimension.small)
+                                .padding(horizontal = AppTheme.dimension.small),
+                            enabled = false,
+                            text = stringResource(R.string.chat),
+                        ) {
+                        }
+                    } ?: run {
+                        BonteButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = AppTheme.dimension.small)
+                                .padding(horizontal = AppTheme.dimension.normal),
+                            enabled = true,
+                            text = stringResource(R.string.chat),
+                        ) {
+                            onAction(Trainer.Action.OnChatClick(state.trainerId))
+                        }
+                    }
                     BonteInfoCard(label = stringResource(R.string.bio), value = trainerData.trainerEntity.bio ?: "")
                     Spacer(modifier = Modifier.height(AppTheme.dimension.small))
                     BonteInfoCard(label = stringResource(R.string.certification), value = trainerData.trainerEntity.certification ?: "")

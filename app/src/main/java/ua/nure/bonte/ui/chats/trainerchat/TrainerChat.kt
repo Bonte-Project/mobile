@@ -1,6 +1,7 @@
 package ua.nure.bonte.ui.chats.trainerchat
 
 import ua.nure.bonte.db.data.entity.Profile
+import ua.nure.bonte.db.data.entity.Trainer
 
 object TrainerChat {
     sealed interface Action {
@@ -19,7 +20,9 @@ object TrainerChat {
         val chatName: String = "",
         val messages: List<Message> = emptyList(),
         val inProgress: Boolean = false,
-        val profile: Profile? = null
+        val profile: Profile? = null,
+        val myTrainerId: String? = null,
+        val myTrainer: Trainer? = null,
     )
 
     data class Message(

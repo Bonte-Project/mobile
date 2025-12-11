@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,7 +19,9 @@ import ua.nure.bonte.repository.dto.ExperienceRequest
 import ua.nure.bonte.repository.trainer.TrainerRepository
 import ua.nure.bonte.repository.user.UserRepository
 import ua.nure.bonte.repository.dto.TrainerResponse
+import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.sessions.SessionsRepository
+import ua.nure.bonte.ui.chats.chatlist.ChatList
 import ua.nure.bonte.ui.trainer.view.Trainer.Event.*
 
 import javax.inject.Inject
@@ -40,8 +43,11 @@ class TrainerViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     private var loadSessionsJob: Job? = null
+    private var loadTrainerJob: Job? = null
 
     init {
+        loadOwnTrainer()
+        observeMyTrainer()
         observeTrainer()
         loadSessions(trainerId = params.trainerId)
     }
@@ -75,6 +81,11 @@ class TrainerViewModel @Inject constructor(
                     )
                 }
             }
+            is Trainer.Action.OnChatClick -> {
+                if (action.chatId != null) {
+                    _event.emit(Trainer.Event.OnNavigate(Screen.Chat.TrainerChat(action.chatId)))
+                }
+            }
         }
     }
     private fun observeTrainer() = viewModelScope.launch {
@@ -93,5 +104,40 @@ class TrainerViewModel @Inject constructor(
         loadSessionsJob = viewModelScope.launch {
             sessionsRepository.getTrainerSessionsByTrainerId(id = trainerId)
         }
+    }
+
+    private fun loadOwnTrainer() {
+        if (_state.value.myTrainer != null) {
+            return
+        }
+        loadTrainerJob?.cancel()
+        loadTrainerJob = viewModelScope.launch {
+            trainerRepository.loadMyTrainer()
+                .onSuccess { data ->
+                    _state.update { s ->
+                        s.copy(
+                            inProgress = false,
+                            myTrainerId = data.trainer.id
+                        )
+                    }
+                }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeMyTrainer() = viewModelScope.launch {
+        _state
+            .map { it.myTrainerId }
+            .distinctUntilChanged()
+            .filterNotNull()
+            .flatMapLatest { myTrainerId ->
+                trainerRepository.getTrainerFlowById(id = myTrainerId)
+            }.collect { trainer ->
+                _state.update { s ->
+                    s.copy(
+                        myTrainer = trainer,
+                    )
+                }
+            }
     }
 }
