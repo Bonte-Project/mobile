@@ -6,18 +6,22 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import ua.nure.bonte.db.data.AppDb
 import ua.nure.bonte.db.data.entity.MessageEntity
+import ua.nure.bonte.repository.DataError
+import ua.nure.bonte.repository.Result
 import ua.nure.bonte.repository.dto.ChatPartnerListResponse
 import ua.nure.bonte.repository.dto.MessageDto
 import ua.nure.bonte.repository.dto.MessageSingleResponse
 import ua.nure.bonte.repository.dto.MessagesListResponse
 import ua.nure.bonte.repository.dto.SendMessageRequest
 import ua.nure.bonte.repository.dto.mapper.MessageMapper
+import ua.nure.bonte.repository.safeCall
 import javax.inject.Inject
 
 class MessagesRepositoryImpl @Inject constructor(
@@ -32,6 +36,13 @@ class MessagesRepositoryImpl @Inject constructor(
 
         return response.data
     }
+
+    override suspend fun loadChatList(): Result<ChatPartnerListResponse, DataError> =
+        withContext(Dispatchers.IO) {
+            safeCall<ChatPartnerListResponse> {
+                httpClient.get("trainer-messages/chats/list")
+            }
+        }
 
     override suspend fun getChatHistory(conversationId: String): List<MessageDto> {
         val response: MessagesListResponse =
@@ -53,6 +64,7 @@ class MessagesRepositoryImpl @Inject constructor(
                 println(">>> DAO OBSERVE conversationId=$conversationId, listSize=${list.size}")
                 list.forEach { println(">>> DAO MSG: id=${it.id}, fromTrainer=${it.fromTrainer}") }
             }
+
     override suspend fun sendMessage(
         conversationId: String,
         message: String,

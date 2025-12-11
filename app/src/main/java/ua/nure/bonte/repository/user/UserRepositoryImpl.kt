@@ -76,20 +76,29 @@ class UserRepositoryImpl @OptIn(ExperimentalCoroutinesApi::class) constructor(
     override fun getMe(): Flow<Profile> =
         dbRepository
             .dbFlow
-            .flatMapLatest { db ->  db.profileDao.getProfile() }
+            .flatMapLatest { db -> db.profileDao.getProfile() }
             .flowOn(dbDeliveryDispatcher)
             .catch {
                 it.printStackTrace()
             }
 
-    override suspend fun getUserById(id: String): Result<ProfileDataDto, DataError> = withContext(
-        Dispatchers.IO) {
-        safeCall<ProfileDataDto> {
-            httpClient.get("users/$id")
-        }.onSuccess {
-            dbRepository.db.profileDao.insert(
-                it.user.toEntity()
-            )
+    override suspend fun getUserById(id: String): Result<ProfileDataDto, DataError> =
+        withContext(Dispatchers.IO) {
+            safeCall<ProfileDataDto> {
+                httpClient.get("users/$id")
+            }.onSuccess {
+                dbRepository.db.profileDao.insert(
+                    it.user.toEntity()
+                )
+            }
         }
-    }
+
+    override suspend fun getUsersFromList(ids: List<String>): Flow<List<ProfileEntity>> =
+        dbRepository
+            .dbFlow
+            .flatMapLatest { db ->  db.profileDao.getUsersFromList(ids) }
+            .flowOn(dbDeliveryDispatcher)
+            .catch {
+                it.printStackTrace()
+            }
 }

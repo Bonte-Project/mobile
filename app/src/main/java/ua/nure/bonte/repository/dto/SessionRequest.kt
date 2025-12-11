@@ -9,3 +9,11 @@ data class SessionRequest(
     val scheduledAt: String,
     val status: SessionStatus? = null,
 )
+
+@Serializable
+data class SessionScheduleLongRequest(
+    val name: String,
+    val userId: String? = null,
+    val scheduledAt: Long,
+    val status: SessionStatus? = null,
+)

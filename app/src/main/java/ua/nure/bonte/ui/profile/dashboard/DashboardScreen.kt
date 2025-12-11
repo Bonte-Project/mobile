@@ -1,6 +1,7 @@
 package ua.nure.bonte.ui.profile.dashboard
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -273,7 +274,8 @@ private fun DashboardScreenContent(
                                 Day(
                                     day = calendarDay,
                                     sessions = state.sessions?.get(calendarDay.date.dayOfYear),
-                                    onDayClick = { }
+                                    onDayClick = { },
+                                    onEditClick = { }
                                 )
                             },
                             monthHeader = { month ->

@@ -22,4 +22,6 @@ interface UserRepository {
 
     suspend fun getUserById(id: String): Result<ProfileDataDto, DataError>
 
+    suspend fun getUsersFromList(ids: List<String>): Flow<List<ProfileEntity>>
+
 }

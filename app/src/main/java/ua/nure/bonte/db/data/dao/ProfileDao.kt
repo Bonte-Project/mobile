@@ -18,4 +18,7 @@ interface ProfileDao {
 
     @Query("SELECT * FROM profileentity WHERE isOwned == true")
     fun getProfileEntity(): ProfileEntity?
+
+    @Query("SELECT * FROM ProfileEntity WHERE id IN (:list)")
+    fun getUsersFromList(list: List<String>): Flow<List<ProfileEntity>>
 }

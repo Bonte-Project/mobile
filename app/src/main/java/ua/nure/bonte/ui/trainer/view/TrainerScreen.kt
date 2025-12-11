@@ -144,7 +144,8 @@ private fun TrainerScreenContent(
                             dayContent = { calendarDay ->
                                 Day(
                                     day = calendarDay,
-                                    sessions = state.sessions?.get(calendarDay.date.dayOfYear)
+                                    sessions = state.sessions?.get(calendarDay.date.dayOfYear),
+                                     onDayClick = {}
                                 ) {
                                     onAction(Trainer.Action.OnDayClick(date = calendarDay.date))
                                 }

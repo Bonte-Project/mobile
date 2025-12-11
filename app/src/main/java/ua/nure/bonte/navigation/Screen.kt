@@ -1,6 +1,7 @@
 package ua.nure.bonte.navigation
 
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 sealed class Screen {
@@ -36,5 +37,6 @@ sealed class Screen {
 
     @Serializable sealed class OwnTrainer : Screen() {
         @Serializable data object View : OwnTrainer()
+        @Serializable data class EditSessions(val trainerId: String, val day: Long) : OwnTrainer()
     }
 }

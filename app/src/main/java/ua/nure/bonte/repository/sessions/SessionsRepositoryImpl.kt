@@ -10,20 +10,27 @@ import io.ktor.client.request.setBody
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 import ua.nure.bonte.db.DbRepository
 import ua.nure.bonte.db.data.AppDb
+import ua.nure.bonte.db.data.entity.SessionEntity
 import ua.nure.bonte.di.DbDeliveryDispatcher
 import ua.nure.bonte.repository.DataError
 import ua.nure.bonte.repository.Result
 import ua.nure.bonte.repository.dto.CreateSessionDto
 import ua.nure.bonte.repository.dto.ResponseDto
 import ua.nure.bonte.repository.dto.SessionRequest
+import ua.nure.bonte.repository.dto.SessionScheduleLongRequest
 import ua.nure.bonte.repository.dto.SessionStatus
 import ua.nure.bonte.repository.dto.SessionsDto
 import ua.nure.bonte.repository.dto.mapper.toEntity
 import ua.nure.bonte.repository.onSuccess
 import ua.nure.bonte.repository.safeCall
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 
@@ -40,7 +47,7 @@ class SessionsRepositoryImpl @Inject constructor(
             safeCall<SessionsDto> {
                 httpClient.get("training-sessions")
             }.onSuccess { sessionsDto ->
-                dbRepository.db.sessionDao.insert(
+                dbRepository.db.sessionDao.syncInsertForUser(
                     sessionsDto.sessions.map { it.toEntity() }
                 )
             }
@@ -51,7 +58,7 @@ class SessionsRepositoryImpl @Inject constructor(
             safeCall<SessionsDto> {
                 httpClient.get("training-sessions/trainer")
             }.onSuccess { sessionsDto ->
-                dbRepository.db.sessionDao.insert(
+                dbRepository.db.sessionDao.syncInsertForTrainer(
                     sessionsDto.sessions.map { it.toEntity() }
                 )
             }
@@ -71,16 +78,16 @@ class SessionsRepositoryImpl @Inject constructor(
     override suspend fun createSession(
         name: String,
         userId: String,
-        scheduledAt: String
+        scheduledAt: LocalDateTime
     ): Result<CreateSessionDto, DataError> =
         withContext(Dispatchers.IO) {
             safeCall<CreateSessionDto> {
                 httpClient.post("training-sessions") {
                     setBody(
-                        SessionRequest(
+                        SessionScheduleLongRequest(
                             name = name,
                             userId = userId,
-                            scheduledAt = scheduledAt,
+                            scheduledAt = scheduledAt.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
                         )
                     )
                 }
@@ -92,17 +99,19 @@ class SessionsRepositoryImpl @Inject constructor(
     override suspend fun updateSession(
         id: String,
         name: String,
-        scheduledAt: String,
+        scheduledAt: LocalDateTime,
         status: SessionStatus
     ): Result<CreateSessionDto, DataError> =
         withContext(Dispatchers.IO) {
             safeCall<CreateSessionDto> {
                 httpClient.patch("training-sessions/$id") {
                     setBody(
-                        SessionRequest(
+                        SessionScheduleLongRequest(
                             name = name,
                             status = status,
-                            scheduledAt = scheduledAt,
+                            scheduledAt = scheduledAt
+                                .atZone(ZoneId.systemDefault())
+                                .toEpochSecond() * 1000,
                         )
                     )
                 }
@@ -114,10 +123,21 @@ class SessionsRepositoryImpl @Inject constructor(
     override suspend fun deleteSession(id: String): Result<ResponseDto, DataError> =
         withContext(Dispatchers.IO) {
         safeCall<ResponseDto> {
-            httpClient.delete("/training-sessions/$id")
+            httpClient.delete("training-sessions/$id")
         }.onSuccess {
             dbRepository.db.sessionDao.deleteById(id = id)
         }
     }
 
+    override suspend fun getSessionsByDay(
+        trainerId: String,
+        day: LocalDate
+    ): Flow<List<SessionEntity>> =
+        dbRepository.dbFlow.flatMapLatest { db ->
+            db.sessionDao.getSessionsByDay(
+                trainerId = trainerId,
+                dayStartMils = day.atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000,
+                dayEndMils = day.plusDays(1L).atStartOfDay(ZoneId.systemDefault()).minusSeconds(1L).toEpochSecond() * 1000
+            )
+        }
 }

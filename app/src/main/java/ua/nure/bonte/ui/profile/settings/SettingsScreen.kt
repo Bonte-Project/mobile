@@ -236,45 +236,7 @@ private fun SettingsScreenContent(
                     }
                 }
             }
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = AppTheme.dimension.normal)
-                        .clip(shape = AppTheme.shape.accentShape)
-                        .border(
-                            width = 2.dp,
-                            color = AppTheme.color.grey,
-                            shape = AppTheme.shape.accentShape
-                        )
-                        .clickable {
-                            onAction(Settings.Action.OnSubscription)
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .padding(start = AppTheme.dimension.normal)
-                            .padding(vertical = AppTheme.dimension.normal),
-                        painter = painterResource(R.drawable.subscription),
-                        contentDescription = null,
-                        tint = AppTheme.color.foreground
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = AppTheme.dimension.small),
-                        text = stringResource(R.string.subscriptionPlan),
-                        style = AppTheme.typography.large
-                    )
-                    Spacer(
-                        modifier = Modifier.weight(1F)
-                    )
-                    Icon(
-                        modifier = Modifier.padding(end = AppTheme.dimension.normal),
-                        painter = painterResource(R.drawable.arrow_right),
-                        contentDescription = null,
-                        tint = AppTheme.color.foreground
-                    )
-                }
-            }
+
             item {
                 BonteButton(
                     modifier = Modifier

@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +15,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,25 +26,21 @@ import coil3.compose.AsyncImage
 import ua.nure.bonte.R
 import ua.nure.bonte.ui.theme.AppTheme
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BonteAddSessionDialog(
+fun BonteEditSessionDialog(
     modifier: Modifier = Modifier,
     sessionName: String,
     date: LocalDate? = null,
     time: LocalTime? = null,
-    userId: String? = null,
-    userName: String? = null,
-    userAvatar: String? = null,
     onSessionNameChanged: (String) -> Unit,
     onApply: () -> Unit,
     onDismiss: () -> Unit,
     onTimeSelect: () -> Unit,
-    onUserSelect: () -> Unit,
+    onDateSelect: () -> Unit,
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -58,7 +51,8 @@ fun BonteAddSessionDialog(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AppTheme.dimension.normal, vertical = AppTheme.dimension.normal),
+                .padding(horizontal = AppTheme.dimension.normal, vertical = AppTheme.dimension.normal)
+                .clickable(onClick = onDateSelect),
             text = date?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) ?: "",
             style = AppTheme.typography.regular
         )
@@ -71,40 +65,6 @@ fun BonteAddSessionDialog(
             text = time?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: stringResource(R.string.selectTime),
             style = AppTheme.typography.regular
         )
-
-        Row(modifier = modifier
-            .padding(horizontal = AppTheme.dimension.normal)
-            .fillMaxWidth()
-            .clip(shape = AppTheme.shape.inputShape)
-            .border(width = 1.dp, color = AppTheme.color.grey, shape = AppTheme.shape.accentShape)
-            .clickable(onClick = onUserSelect),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            userAvatar?.let {
-                AsyncImage(
-                    modifier = Modifier
-                        .padding(all = AppTheme.dimension.normal)
-                        .size(90.dp)
-                        .clip(shape = CircleShape)
-                        .border(width = 1.dp, color = AppTheme.color.foreground, shape = CircleShape),
-                    model = userAvatar,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            } ?: run {
-                Spacer(
-                    modifier = Modifier
-                        .padding(all = AppTheme.dimension.normal)
-                        .size(90.dp)
-                )
-            }
-            Text(
-                text = userName ?: stringResource(R.string.selectUser),
-                style = AppTheme.typography.large
-            )
-
-        }
 
         BonteInputField(
             modifier = Modifier
@@ -150,9 +110,9 @@ fun BonteAddSessionDialog(
 
 @Preview
 @Composable
-private fun BonteAddSessionDialogPreview(modifier: Modifier = Modifier) {
+private fun BonteEditSessionDialogPreview(modifier: Modifier = Modifier) {
     AppTheme {
-        BonteAddSessionDialog(
+        BonteEditSessionDialog(
             sessionName = "some name",
             date = LocalDate.now(),
             time = LocalTime.now(),
@@ -160,16 +120,16 @@ private fun BonteAddSessionDialogPreview(modifier: Modifier = Modifier) {
             onSessionNameChanged = {},
             onDismiss = {},
             onTimeSelect = {},
-            onUserSelect = {}
+            onDateSelect = {}
         )
     }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-private fun BonteAddSessionDialogDarkPreview(modifier: Modifier = Modifier) {
+private fun BonteEditSessionDialogDarkPreview(modifier: Modifier = Modifier) {
     AppTheme {
-        BonteAddSessionDialog(
+        BonteEditSessionDialog(
             sessionName = "some name",
             date = LocalDate.now(),
             time = LocalTime.now(),
@@ -177,7 +137,7 @@ private fun BonteAddSessionDialogDarkPreview(modifier: Modifier = Modifier) {
             onSessionNameChanged = {},
             onDismiss = {},
             onTimeSelect = {},
-            onUserSelect = {}
+            onDateSelect = {}
         )
     }
 }

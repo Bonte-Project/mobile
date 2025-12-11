@@ -114,4 +114,11 @@
     <string name="delete">Delete</string>
     <string name="noExperience">No experience yet</string>
     <string name="ownTrainer">Own Trainer</string>
+    <string name="sessionName">Session name</string>
+    <string name="selectUser">Select user</string>
+    <string name="selectTime">Select Time</string>
+    <string name="editSessions">Edit Sessions</string>
+    <string name="confirmDelete">Confirm delete?</string>
+    <string name="confirmDeleteMessage">Are you sure you want to delete it permanently</string>
+    <string name="applyTitle">Apply</string>
 </resources>
