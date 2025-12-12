@@ -74,7 +74,30 @@ class EditTrainerViewModel @Inject constructor(
             is EditTrainer.Action.OnNavigate -> {
                 viewModelScope.launch { _event.emit(EditTrainer.Event.OnNavigate(action.route)) }
             }
+            EditTrainer.Action.OnConfirm -> {
+                val trainer = state.value.trainer ?: return
+                _state.update { it.copy(inProgress = true) }
 
+                viewModelScope.launch {
+                    trainerRepository.updateTrainer(
+                        TrainerRequest(
+                            bio = trainer.bio,
+                            certification = trainer.certification,
+                            specialization = trainer.specialization,
+                            location = trainer.location,
+                            isActive = trainer.isActive
+                        )
+                    )
+                        .onSuccess {
+                            Log.d(TAG, "Trainer updated successfully via Confirm")
+                            _state.update { it.copy(inProgress = false) }
+                        }
+                        .onError { e ->
+                            Log.e(TAG, "Failed to update trainer: $e")
+                            _state.update { it.copy(inProgress = false) }
+                        }
+                }
+            }
             is EditTrainer.Action.OnBioChange -> {
                 _state.update { s -> s.copy(trainer = s.trainer?.copy(bio = action.bio)) }
             }

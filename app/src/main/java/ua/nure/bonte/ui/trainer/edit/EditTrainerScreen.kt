@@ -126,6 +126,19 @@ private fun EditTrainerScreenContent(
                 }
             }
             item {
+                BonteButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AppTheme.dimension.normal),
+                    text = stringResource(R.string.confirm),
+                    onClick = {
+                        onAction(EditTrainer.Action.OnConfirm)
+                        onAction(EditTrainer.Action.OnBack)
+                    }
+                )
+            }
+
+            item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

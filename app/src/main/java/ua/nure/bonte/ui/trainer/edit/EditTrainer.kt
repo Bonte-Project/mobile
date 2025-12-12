@@ -13,7 +13,7 @@ object EditTrainer {
     sealed interface Action {
         data object OnBack : Action
         data class OnNavigate(val route: Screen) : Action
-
+        data object OnConfirm : Action
         data class OnBioChange(val bio: String?) : Action
         data class OnCertificationChange(val certification: String?) : Action
         data class OnSpecializationChange(val specialization: String?) : Action
