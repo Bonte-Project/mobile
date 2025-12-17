@@ -1,12 +1,13 @@
 package ua.nure.bonte.ui.compose
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +32,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import android.content.res.Configuration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,14 +140,22 @@ fun SleepLogDialog(
 
                 try {
                     val startTime = LocalTime.parse(startInput, timeFormatter)
-                    var endTime = LocalTime.parse(endInput, timeFormatter)
+                    val endTime = LocalTime.parse(endInput, timeFormatter)
 
                     val today = LocalDate.now()
-                    var startDateTime = LocalDateTime.of(today, startTime)
-                    var endDateTime = LocalDateTime.of(today, endTime)
+                    val yesterday = today.minusDays(1)
 
-                    if (endDateTime.isBefore(startDateTime)) {
-                        endDateTime = endDateTime.plusDays(1)
+                    val startDateTime: LocalDateTime
+                    val endDateTime: LocalDateTime
+
+                    if (endTime.isBefore(startTime)) {
+                        // Ночной сон (вчера → сегодня)
+                        startDateTime = LocalDateTime.of(yesterday, startTime)
+                        endDateTime = LocalDateTime.of(today, endTime)
+                    } else {
+                        // Сон без перехода дня (дневной)
+                        startDateTime = LocalDateTime.of(today, startTime)
+                        endDateTime = LocalDateTime.of(today, endTime)
                     }
 
                     onSave(
@@ -165,7 +173,11 @@ fun SleepLogDialog(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
 @Composable
 private fun SleepLogDialogPreview() {
     AppTheme {

@@ -112,7 +112,10 @@ private fun DashboardScreenContent(
         state.nutritionLogs.filter { it.createdAt != null && isToday(it.createdAt) }
     val todayActivityLogs =
         state.activityLogs.filter { it.completedAt != null && isToday(it.completedAt) }
-    val todaySleepLogs = state.sleepLogs.filter { it.startTime != null && isToday(it.startTime) }
+    val todaySleepLogs =
+        state.sleepLogs.filter {
+            isSleepForToday(it.startTime, it.endTime)
+        }
 
     val totalCalories = todayNutritionLogs.sumOf { it.calories }
     val totalProtein = todayNutritionLogs.sumOf { it.protein }
@@ -327,6 +330,15 @@ data class RecentItem(
     val icon: Int
 )
 
+fun isSleepForToday(start: String?, end: String?): Boolean {
+    return try {
+        if (end == null) return false
+        val endDate = LocalDate.parse(end.substring(0, 10))
+        endDate == LocalDate.now()
+    } catch (_: Exception) {
+        false
+    }
+}
 
 
 
