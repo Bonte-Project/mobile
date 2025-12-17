@@ -98,12 +98,14 @@ class AnalyticsViewModel @Inject constructor(
         val sleepDataByDay = mutableMapOf<LocalDate, Int>()
         currentState.sleepLogs.forEach { log ->
             try {
-                val startDate = OffsetDateTime.parse(log.startTime).toLocalDate()
-                if (!startDate.isBefore(weekStart) && !startDate.isAfter(now)) {
+                val end = OffsetDateTime.parse(log.endTime)
+                val endDate = end.toLocalDate()
+
+                if (!endDate.isBefore(weekStart) && !endDate.isAfter(now)) {
                     val start = OffsetDateTime.parse(log.startTime)
-                    val end = OffsetDateTime.parse(log.endTime)
                     val minutes = ChronoUnit.MINUTES.between(start, end).toInt()
-                    sleepDataByDay[startDate] = sleepDataByDay.getOrDefault(startDate, 0) + minutes
+                    sleepDataByDay[endDate] =
+                        sleepDataByDay.getOrDefault(endDate, 0) + minutes
                 }
             } catch (_: Exception) {}
         }
@@ -163,13 +165,14 @@ class AnalyticsViewModel @Inject constructor(
 
         currentState.sleepLogs.forEach { log ->
             try {
-                val startDate = OffsetDateTime.parse(log.startTime).toLocalDate()
-                if (!startDate.isBefore(prevWeekStart) && startDate.isBefore(weekStart)) {
+                val end = OffsetDateTime.parse(log.endTime)
+                val endDate = end.toLocalDate()
+
+                if (!endDate.isBefore(prevWeekStart) && endDate.isBefore(weekStart)) {
                     val start = OffsetDateTime.parse(log.startTime)
-                    val end = OffsetDateTime.parse(log.endTime)
                     val minutes = ChronoUnit.MINUTES.between(start, end).toInt()
-                    prevWeekSleepData[startDate] =
-                        prevWeekSleepData.getOrDefault(startDate, 0) + minutes
+                    prevWeekSleepData[endDate] =
+                        prevWeekSleepData.getOrDefault(endDate, 0) + minutes
                 }
             } catch (_: Exception) {}
         }
